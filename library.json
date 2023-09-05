@@ -1,0 +1,33 @@
+{
+  "name": "hh_framework",
+  "version": "1.0.0",
+  "keywords": " iot, automation, async, async-tcp, async-tcp-ssl, async-mqtt, mqtt, async-mqtt-client, esp8266, esp32",
+  "description": "Arduino Arduino Library for ESP8266, ESP32 framework to write ESP apps",
+  "authors": 
+  [
+    {
+      "name": "Iain Harfield",
+    	"url": "https://www.linkedin.com/in/iharfield/?originalSubdomain=uk",
+      "maintainer": true
+    }
+  ],
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/iainharfield/esp_deviceFramework.git"
+  },
+  "dependencies": 
+  [
+    {
+      "owner": "khoih-prog",
+      "name": "AsyncMQTT_Generic",
+      "version": ">=1.8.1",
+      "platforms": ["espressif32"]
+    }
+  ],
+  "license": "MIT",
+  "frameworks": "*",
+  "platforms": ["espressif8266", "espressif32"],
+  "examples": "examples/*/*.cpp",
+  "headers": ["hh_utilities.h", "hh_defines"]
+}
