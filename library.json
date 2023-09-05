@@ -41,7 +41,11 @@
       "name": "ArduinoJson",
       "version": ">=6.21.3",
       "platforms": ["espressif32"]
-    }
+    },
+    {
+      "name": "external-repo",
+      "version": "https://github.com/khoih-prog/ESPAsyncDNSServer.git"
+    }   
   ],
   "license": "MIT",
   "frameworks": "*",
