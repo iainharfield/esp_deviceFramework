@@ -23,6 +23,24 @@
       "name": "AsyncMQTT_Generic",
       "version": ">=1.8.1",
       "platforms": ["espressif32"]
+    },
+    {
+      "owner": "khoih-prog",
+      "name": "ESPAsync_WiFiManage",
+      "version": ">=1.15.1",
+      "platforms": ["espressif32"]
+    },
+    {
+      "owner": "khoih-prog",
+      "name": "ESP_DoubleResetDetector",
+      "version": ">=1.3.2",
+      "platforms": ["espressif32"]
+    },
+    {
+      "owner": "bblanchon",
+      "name": "ArduinoJson",
+      "version": ">=6.21.3",
+      "platforms": ["espressif32"]
     }
   ],
   "license": "MIT",
