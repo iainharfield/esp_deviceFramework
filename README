@@ -1,1 +1,14 @@
-New - work in progress
+work in progress
+
+A common library for esp8266 and esp32 projects. 
+This library supports
+
+*OTA upgrades
+*Set up of wifi configuration
+*mqtt broker configuration
+*double rest detection to trigger above configuration
+*telnet interface for debug and reporting
+*NTP setup
+*user exit extension support
+*CSV formatted logging (logs can be output to MQTT, Telnet, Serial)
+
