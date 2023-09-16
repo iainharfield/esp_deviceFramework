@@ -3,7 +3,7 @@ work in progress
 A simple common library for esp8266 and esp32 projects. 
 reused many open source libraries - thanks
 
-see esp_deviceFramework2 which contains 3 time period scheduler for automated actions. 
+see esp_deviceFramework2 which contains configurable, 3 time period/day scheduler for automated actions. 
 
 This library supports:
 
