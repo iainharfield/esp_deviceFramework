@@ -8,8 +8,8 @@ see esp_deviceFramework2 which contains 3 time period scheduler for automated ac
 This library supports:
 
 * OTA upgrades
-* Set up of wifi configuration
-* mqtt broker configuration
+* Set up of wifi configuration (connect, reconnect, ....)
+* mqtt broker configuration (Connect, reconnect, lwt, .... )
 * double reset detection to trigger above configuration
 * telnet interface for debug and reporting
 * NTP setup
