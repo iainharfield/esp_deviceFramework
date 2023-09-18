@@ -1,1 +1,18 @@
 New - work in progress
+A simple common library for esp8266 and esp32 projects. 
+reused many open source libraries - thanks
+
+see esp_deviceFramework2 which contains configurable, 3 time period/day scheduler for automated actions. 
+
+This library supports:
+
+* OTA upgrades
+* Set up of wifi configuration (connect, reconnect, ....)
+* mqtt broker configuration (Connect, reconnect, lwt, .... )
+* double reset detection to trigger above configuration
+* telnet interface for debug and reporting
+* NTP setup
+* user exit extension support
+* CSV formatted logging (logs can be output to MQTT, Telnet, Serial)
+
+I can see loads of improvements needed and future ideas but i use with openhab just fine. 
