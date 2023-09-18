@@ -61,7 +61,7 @@ extern bool onMqttMessageAppExt(char *topic, char *payload, const AsyncMqttClien
 //extern bool onMqttMessageCntrlExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);
 
 extern void appMQTTTopicSubscribe();
-extern void processAppTOD_Ext();
+//extern void processAppTOD_Ext();
 extern void processCntrlTOD_Ext();
 
 // File System functions
