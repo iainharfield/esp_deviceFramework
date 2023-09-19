@@ -23,8 +23,6 @@
 
 
 #include "hh_defines.h"
-#include "hh_utilities.h"
-#include "hh_cntrl2.h"
 
 
 bool onMqttMessageAppExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);    // Required by template
@@ -33,7 +31,6 @@ void telnet_extension_1(char);      // Required by template
 void telnet_extension_2(char);      // Required by template
 void telnet_extensionHelp(char);    // Required by template
 void processTOD_Ext();              // Required by template
-void processCntrlTOD_Ext(); // Required by template
 
 // defined in asyncConnect.cpp
 extern void platform_setup(bool);
@@ -47,7 +44,7 @@ devConfig espDevice;
 // Application Specific MQTT Topics and config
 const char *oh3StateValue = "/house/example/exapmple-1/value";  //FIXTHIS
 
-String deviceName = "ex-2";
+String deviceName = "ex-1";
 String deviceType = "exmpl";
 
 /*
@@ -119,17 +116,13 @@ void telnet_extension_1(char c)
   
 }
 
-//*****************************************************
 // Process any application specific telnet commannds
-//*****************************************************
 void telnet_extension_2(char c)
 {
     printTelnet((String)c);
 }
 
-//************************************************************************************************
-// Prints out any application specific telenet command help instructions this app has implemented
-//************************************************************************************************
+// Process any application specific telnet instructions
 void telnet_extensionHelp(char c)
 {
     printTelnet((String) "x\t\tSome description");
@@ -138,22 +131,4 @@ void telnet_extensionHelp(char c)
 void drdDetected()
 {
     Serial.println("Double resert detected");
-}
-
-
-//************************************************************************
-// Implement any Application Specific TOD behaviour
-// This exit also calls the created controller TOD functions
-// For example if you have created three time contollers you need to call
-// <cntrlname1>.processCntrl_Ext();
-// <cntrlname2>.processCntrl_Ext();
-// <cntrlname3>.processCntrl_Ext();
-//
-// FIXTHIS - Must be a better way
-//************************************************************************
-void processCntrlTOD_Ext()
-{
-    mqttLog("Application Processing Controller TOD functions", true, true);
-    // Call the TOD function for each controller crteated by this app
-    //USCntrlState.processCntrlTOD_Ext();
 }
