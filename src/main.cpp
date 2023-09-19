@@ -24,7 +24,7 @@
 
 #include "hh_defines.h"
 #include "hh_utilities.h"
-#include "hh_cntrl2.h"
+#include "hh_cntrl.h"
 
 
 bool onMqttMessageAppExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);    // Required by template
