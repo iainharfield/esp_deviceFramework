@@ -3,7 +3,10 @@
 #define defines_h
 
 #include <Arduino.h>
-#include <WiFi.h>
+#if defined(ESP32)
+    #include <WiFi.h>   // not required it seems for esp8266
+#endif
+
 //#include "AsyncMqtt_Generic.h"
 
 //#include <TZ.h>
