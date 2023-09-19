@@ -1,7 +1,7 @@
 
 
-#ifndef cntrl2_h
-#define cntrl2_h
+#ifndef cntrl_h
+#define cntrl_h
 
 #include "hh_defines.h"
 #include <Arduino.h>
