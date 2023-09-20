@@ -5,10 +5,10 @@
 //  #error This code is intended to run only on the ESP32 platform! Please check your Tools->Board setting.
 //#endif
 //#include <Arduino.h> 
-#if !defined(ESP32)
-  #pragma message "Compiling for ESP8266"
-  #include <ESP8266WiFi.h>
-#endif  
+//#if !defined(ESP32)
+//  #pragma message "Compiling for ESP8266"
+//  #include <ESP8266WiFi.h>
+//#endif  
 #include <time.h>
 #include <ArduinoOTA.h>
 #include <Ticker.h>
