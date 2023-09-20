@@ -1,4 +1,8 @@
 //#include <ESP8266WiFi.h>
+#if !defined(ESP32)
+  //#pragma message "Compiling for ESP8266"
+  #include <ESP8266WiFi.h>
+#endif  
 
 #include "hh_defines.h"
 

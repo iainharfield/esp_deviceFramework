@@ -8,6 +8,9 @@
 //#if !defined(ESP32)
 //  #pragma message "Compiling for ESP8266"
 //  #include <ESP8266WiFi.h>
+//  #include "LittleFS.h"
+//#else
+//  #include "LITTLEFS.h"
 //#endif  
 #include <time.h>
 #include <ArduinoOTA.h>
@@ -15,9 +18,9 @@
 #include <AsyncMqtt_Generic.h> 
 #include <ESPAsync_WiFiManager.h> // needed for SSID and Password config  
 //#include "LittleFS.h"
-#include "LITTLEFS.h"
-#include <ArduinoJson.h>
 
+#include <ArduinoJson.h>
+#include "LITTLEFS.h"
 #include "hh_defines.h"
 #include "hh_utilities.h"
 
@@ -31,7 +34,7 @@ void connectToWifi();
 void onWifiConnected();
 void onWifiDisconnected();
 void WiFiEvent(WiFiEvent_t);
-void WiFiGotIP(WiFiEvent_t, WiFiEventInfo_t);
+//void WiFiGotIP(WiFiEvent_t, WiFiEventInfo_t);
 
 void onMqttConnect(bool);
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason);
@@ -137,91 +140,129 @@ void WiFiEvent(WiFiEvent_t event)
 {
     Serial.printf("[WiFi-event] event: %d\n", event);
 
-    switch (event) {
+    #if !defined(ESP32)
+    switch (event) 
+    {
+      case WIFI_EVENT_STAMODE_CONNECTED:
+      Serial.println("hh_async: Connected to access point");
+      break;
+      case WIFI_EVENT_STAMODE_DISCONNECTED:
+        Serial.println("hh_async: Disconnected from WiFi access point");
+        onWifiDisconnected();
+      break;
+      case WIFI_EVENT_STAMODE_AUTHMODE_CHANGE:
+        Serial.println("Ahh_async: uthentication mode of access point has changed");
+      break;
+      case WIFI_EVENT_STAMODE_GOT_IP:
+        Serial.println("Ghh_async: ot and IP Address");
+        onWifiConnected();
+        break;
+      case WIFI_EVENT_STAMODE_DHCP_TIMEOUT:
+        break;
+      case WIFI_EVENT_SOFTAPMODE_STACONNECTED:
+        Serial.println("hh_async: Connected to access point");
+        break;
+      case WIFI_EVENT_SOFTAPMODE_STADISCONNECTED:
+        Serial.println("hh_async: Disconnected from WiFi access point");
+        break;
+      case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
+        break;
+      case WIFI_EVENT_MODE_CHANGE:
+        break;
+      case WIFI_EVENT_SOFTAPMODE_DISTRIBUTE_STA_IP:
+        break;
+      case WIFI_EVENT_MAX:
+       break;
+      default: break;
+    }
+    #else
+    switch (event) 
+    {
         case ARDUINO_EVENT_WIFI_READY: 
-            Serial.println("WiFi interface ready");
+            Serial.println("hh_async: WiFi interface ready");
             break;
         case ARDUINO_EVENT_WIFI_SCAN_DONE:
-            Serial.println("Completed scan for access points");
+            Serial.println("hh_async: Completed scan for access points");
             break;
         case ARDUINO_EVENT_WIFI_STA_START:
-            Serial.println("WiFi client started");
+            Serial.println("hh_async: WiFi client started");
             break;
         case ARDUINO_EVENT_WIFI_STA_STOP:
-            Serial.println("WiFi clients stopped");
+            Serial.println("hh_async: WiFi clients stopped");
             break;
         case ARDUINO_EVENT_WIFI_STA_CONNECTED:
-            Serial.println("Connected to access point");
+            Serial.println("hh_async: Connected to access point");
             break;
         case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
-            Serial.println("Disconnected from WiFi access point");
+            Serial.println("hh_async: Disconnected from WiFi access point");
             break;
         case ARDUINO_EVENT_WIFI_STA_AUTHMODE_CHANGE:
-            Serial.println("Authentication mode of access point has changed");
+            Serial.println("hh_async: Authentication mode of access point has changed");
             break;
         case ARDUINO_EVENT_WIFI_STA_GOT_IP:
             onWifiConnected();
             break;
         case ARDUINO_EVENT_WIFI_STA_LOST_IP:
-            Serial.println("Lost IP address and IP address is reset to 0");
+            Serial.println("hh_async: Lost IP address and IP address is reset to 0");
             onWifiDisconnected();
             break;
         case ARDUINO_EVENT_WPS_ER_SUCCESS:
-            Serial.println("WiFi Protected Setup (WPS): succeeded in enrollee mode");
+            Serial.println("hh_async: WiFi Protected Setup (WPS): succeeded in enrollee mode");
             break;
         case ARDUINO_EVENT_WPS_ER_FAILED:
-            Serial.println("WiFi Protected Setup (WPS): failed in enrollee mode");
+            Serial.println("hh_async: WiFi Protected Setup (WPS): failed in enrollee mode");
             break;
         case ARDUINO_EVENT_WPS_ER_TIMEOUT:
-            Serial.println("WiFi Protected Setup (WPS): timeout in enrollee mode");
+            Serial.println("hh_async: WiFi Protected Setup (WPS): timeout in enrollee mode");
             break;
         case ARDUINO_EVENT_WPS_ER_PIN:
-            Serial.println("WiFi Protected Setup (WPS): pin code in enrollee mode");
+            Serial.println("hh_async: WiFi Protected Setup (WPS): pin code in enrollee mode");
             break;
         case ARDUINO_EVENT_WIFI_AP_START:
-            Serial.println("WiFi access point started");
+            Serial.println("hh_async: WiFi access point started");
             break;
         case ARDUINO_EVENT_WIFI_AP_STOP:
-            Serial.println("WiFi access point  stopped");
+            Serial.println("hh_async: WiFi access point  stopped");
             break;
         case ARDUINO_EVENT_WIFI_AP_STACONNECTED:
-            Serial.println("Client connected");
+            Serial.println("hh_async: Client connected");
             break;
         case ARDUINO_EVENT_WIFI_AP_STADISCONNECTED:
-            Serial.println("Client disconnected");
+            Serial.println("hh_async: Client disconnected");
             break;
         case ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED:
-            Serial.println("Assigned IP address to client");
+            Serial.println("hh_async: Assigned IP address to client");
             break;
         case ARDUINO_EVENT_WIFI_AP_PROBEREQRECVED:
-            Serial.println("Received probe request");
+            Serial.println("hh_async: Received probe request");
             break;
         case ARDUINO_EVENT_WIFI_AP_GOT_IP6:
-            Serial.println("AP IPv6 is preferred");
+            Serial.println("hh_async: AP IPv6 is preferred");
             break;
         case ARDUINO_EVENT_WIFI_STA_GOT_IP6:
-            Serial.println("STA IPv6 is preferred");
+            Serial.println("hh_async: STA IPv6 is preferred");
             break;
         case ARDUINO_EVENT_ETH_GOT_IP6:
-            Serial.println("Ethernet IPv6 is preferred");
+            Serial.println("hh_async: Ethernet IPv6 is preferred");
             break;
         case ARDUINO_EVENT_ETH_START:
-            Serial.println("Ethernet started");
+            Serial.println("hh_async: Ethernet started");
             break;
         case ARDUINO_EVENT_ETH_STOP:
-            Serial.println("Ethernet stopped");
+            Serial.println("hh_async: Ethernet stopped");
             break;
         case ARDUINO_EVENT_ETH_CONNECTED:
-            Serial.println("Ethernet connected");
+            Serial.println("hh_async: Ethernet connected");
             break;
         case ARDUINO_EVENT_ETH_DISCONNECTED:
-            Serial.println("Ethernet disconnected");
+            Serial.println("hh_async: Ethernet disconnected");
             break;
         case ARDUINO_EVENT_ETH_GOT_IP:
-            Serial.println("Obtained IP address");
+            Serial.println("hh_async: Obtained IP address");
             break;
         default: break;
       }
+      #endif
     }
 
 
@@ -715,12 +756,12 @@ int loadFileFSConfigFile()
 {
   // read configuration from FS json
   Serial.println(F("Platform: Mounting FS..."));
-
-  // Initialize LittleFS
-  if (!LittleFS.begin(false )) /* false: Do not format if mount failed */
+  #if defined(ESP32)
+  // Initialize LittleFS ESP32.  ESP32 core does not auto format partition
+  if (!LittleFS.begin(false)) /* false: Do not format if mount failed */
   {
     Serial.println("Platform: Failed to mount LittleFS");
-    if (!LittleFS.begin(true )) /* true: format */
+    if (!LittleFS.begin(true)) /* true: format */
     {
       Serial.println("Platform: Failed to format LittleFS");
       return 1;
@@ -729,9 +770,17 @@ int loadFileFSConfigFile()
     {
       Serial.println("Platform: LittleFS formatted successfully");
     }
-  } 
-  //else
-  //{
+  }
+  #else 
+  // Initialize LittleFS ESP8266.  ESP8266 core does auto format partition
+  if (!LittleFS.begin()) 
+  {
+    Serial.println("hh_async: Platform: Failed to format LittleFS");
+    return 1;
+  }
+  #endif
+
+ 
     Serial.println("Platform: LittleFS OK");
 
     listDir(FileFS, "/", 3);
@@ -809,7 +858,7 @@ int loadFileFSConfigFile()
       Serial.println(F("Platform: Config file does not exist"));
       return FILE_NOT_FOUND;
     }
-  //}
+  
   return 0;
 }
 

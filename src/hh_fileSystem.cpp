@@ -1,6 +1,14 @@
 #include "FS.h"   
 #include "LittleFS.h"
 
+#if !defined(ESP32)
+    #pragma message "Compiling for ESP8266"
+    #define FILE_READ       "r"
+    #define FILE_WRITE      "w"
+    #define FILE_APPEND     "a"
+#endif  
+
+
 void listDir(fs::FS &, const char *, uint8_t);
 void createDir(fs::FS &, const char * );
 void removeDir(fs::FS &, const char * );
@@ -31,7 +39,7 @@ void removeDir(fs::FS &fs, const char * path){
 void readFile(fs::FS &fs, const char * path){
     Serial.printf("Reading file: %s\r\n", path);
 
-    File file = fs.open(path);
+    File file = fs.open(path, FILE_READ);
     if(!file || file.isDirectory()){
         Serial.println("- failed to open file for reading");
         return;
