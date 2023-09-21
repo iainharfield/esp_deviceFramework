@@ -45,8 +45,8 @@
     {
       "name": "external-repo",
       "version": "https://github.com/khoih-prog/ESPAsyncDNSServer.git",
-      "platforms": ["espressif32, espressif8266"],
-    }   
+      "platforms": ["espressif32, espressif8266"]
+    },   
     {
       "name": "ESPAsyncUDP",
       "version": "https://github.com/me-no-dev/ESPAsyncUDP.git",
