@@ -65,10 +65,10 @@ extern void telnetBegin();
 extern void printTelnet(String);
 // Implementation in application code
 extern bool onMqttMessageAppExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total);
-//extern bool onMqttMessageCntrlExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);
+extern bool onMqttMessageCntrlExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);
 
 extern void appMQTTTopicSubscribe();
-//extern void processAppTOD_Ext();
+extern void processAppTOD_Ext();    //
 extern void processCntrlTOD_Ext();
 
 // File System functions
