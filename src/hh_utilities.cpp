@@ -16,10 +16,42 @@ extern bool telnetReporting;
 
 bool mqttLog(const char*, bool, bool);
 
-//Publish a log message to 
+byte reportLevel = REPORT_WARN + REPORT_ERROR;
+
+// Publish a log message
+// message  :  a string 
+// type:    : INFO,WARN,ERROR,DEBUG
+//
+// Publish on MQTT and write to serial port and to Telnet depending on reporting config
+// 
+// TelnetReporting == true then send to Telnet port
+// MQTTReporting == true then publish 
+//  
+
+
 bool mqttLog(const char* msg, bool mqtt, bool monitor)   // FIXTHIS
 {
   //Serial.print("sensor Name: "); Serial.println(sensorName);
+
+  if ( reportLevel & REPORT_WARN)
+  {
+    Serial.println("INFO REPORTING");
+  }
+  if ( reportLevel & REPORT_WARN)
+  {
+    Serial.println("WARNING REPORTING");
+  }
+    if ( reportLevel & REPORT_ERROR)
+  {
+    Serial.println("ERROR REPORTING");
+  }
+    if ( reportLevel & REPORT_DEBUG)
+  {
+    Serial.println("DEBUG REPORTING");
+  }
+
+
+
 
   if (ntpTODReceived == false)
     sprintf(ntptod, "%s", "0000-00-00T00:00:00");

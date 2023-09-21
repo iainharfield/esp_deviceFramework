@@ -36,7 +36,8 @@
 
 #define REPORT_INFO 0
 #define REPORT_WARN 1
-#define REPORT_DEBUG 2
+#define REPORT_ERROR 2
+#define REPORT_DEBUG 3
 
 //***************************************************************
 // Controller Specific MQTT Topics and config
