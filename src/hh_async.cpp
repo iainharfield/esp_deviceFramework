@@ -65,7 +65,7 @@ extern void telnetBegin();
 extern void printTelnet(String);
 // Implementation in application code
 extern bool onMqttMessageAppExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total);
-extern bool onMqttMessageCntrlExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);
+extern bool onMqttMessageAppCntrlExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);
 
 extern void appMQTTTopicSubscribe();
 extern void processAppTOD_Ext();    //
@@ -641,7 +641,7 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
     //****************************
     // Implement contoller and Application MQTT   FIXTHIS - shit logic
     //****************************
-    //onMqttMessageCntrlExt(topic, payload, properties, len, index, total);
+    onMqttMessageAppCntrlExt(topic, payload, properties, len, index, total);
   
     onMqttMessageAppExt(topic, payload, properties, len, index, total);
    //mqttLog("onMqttMessageAppExt processing complete", true, true);

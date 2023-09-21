@@ -28,6 +28,8 @@
 
 
 bool onMqttMessageAppExt(char *, char *, const AsyncMqttClientMessageProperties &, const size_t &, const size_t &, const size_t &);    // Required by template
+bool onMqttMessageAppCntrlExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total);
+
 void appMQTTTopicSubscribe();
 void telnet_extension_1(char);      // Required by template
 void telnet_extension_2(char);      // Required by template
@@ -96,6 +98,10 @@ void loop(void)
 bool onMqttMessageAppExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total)
 {
     return false;
+}
+bool onMqttMessageAppCntrlExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total)
+{
+	return false;
 }
 //***********************************************************
 // Subscribe to application specific topics

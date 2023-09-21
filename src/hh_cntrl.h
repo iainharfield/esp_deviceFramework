@@ -43,6 +43,8 @@ extern void app_WD_auto(void *);
 extern void app_WE_auto(void *);
 
 void processCntrlTimes(char *, char (&ptr)[6][10], int lptr[6]);
+bool onMqttMessageCntrlExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total);
+
 
 class cntrlState
 {
