@@ -22,7 +22,7 @@
       "owner": "khoih-prog",
       "name": "AsyncMQTT_Generic",
       "version": ">=1.8.1",
-      "platforms": ["espressif32, espressif8266"]
+      "platforms": ["espressif32", "espressif8266"]
     },
     {
       "owner": "khoih-prog",
