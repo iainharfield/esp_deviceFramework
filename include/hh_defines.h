@@ -34,10 +34,10 @@
 #define oh3CommandTOD "/house/service/time-of-day"             // Time of day broadcast from OpenHab
 #define oh3StateIOTRefresh "/house/service/iot-device-refresh" // Request Refresh of Contol times ( not needed by all apps)
 
-#define REPORT_INFO 0
-#define REPORT_WARN 1
-#define REPORT_ERROR 2
-#define REPORT_DEBUG 3
+#define REPORT_INFO   1
+#define REPORT_WARN   2
+#define REPORT_ERROR  4
+#define REPORT_DEBUG  8
 
 //***************************************************************
 // Controller Specific MQTT Topics and config

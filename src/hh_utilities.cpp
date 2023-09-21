@@ -33,7 +33,7 @@ bool mqttLog(const char* msg, bool mqtt, bool monitor)   // FIXTHIS
 {
   //Serial.print("sensor Name: "); Serial.println(sensorName);
 
-  if ( reportLevel & REPORT_WARN)
+  if ( reportLevel & REPORT_INFO)
   {
     Serial.println("INFO REPORTING");
   }
