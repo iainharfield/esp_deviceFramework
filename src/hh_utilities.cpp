@@ -16,21 +16,11 @@ extern bool telnetReporting;
 
 bool mqttLog(const char*, bool, bool);
 
-byte reportLevel = REPORT_WARN + REPORT_ERROR;
+byte reportLevel = REPORT_WARN | REPORT_ERROR;
 
-char * logRecordType [] = {
-    (char*) "UNKWN",    // 0
-    (char*) "INFO",     // 1
-    (char*) "WARN",     // 2
-    (char*) "UNKWN",    // 3
-    (char*) "ERROR",    // 4
-    (char*) "UNKWN",    // 5 
-    (char*) "UNKWN",    // 6
-    (char*) "UNKWN",    // 7
-    (char*) "DEBUG",    // 8
-};
 //#define N_ITEMS     (sizeof(items)/sizeof(char *))
 
+//********************************************
 // Publish a log message
 // message  :  a string 
 // type:    : INFO,WARN,ERROR,DEBUG
