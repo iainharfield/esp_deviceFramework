@@ -16,7 +16,7 @@ extern bool telnetReporting;
 
 bool mqttLog(const char*, bool, bool);
 
-byte reportLevel = REPORT_WARN | REPORT_ERROR;
+byte reportFilter = REPORT_WARN | REPORT_ERROR;
 
 //#define N_ITEMS     (sizeof(items)/sizeof(char *))
 
@@ -34,7 +34,7 @@ byte reportLevel = REPORT_WARN | REPORT_ERROR;
 bool mqttLog(const char* msg, byte recordType, bool mqtt, bool monitor)   // FIXTHIS
 {
   //Serial.print("sensor Name: "); Serial.println(sensorName);
-  String logRecordType = "UNKNN";
+  String logRecordType = "UNKNWN";
   
   if ( recordType & REPORT_INFO)
   {
@@ -53,8 +53,8 @@ bool mqttLog(const char* msg, byte recordType, bool mqtt, bool monitor)   // FIX
     logRecordType = "DEBUG";
   }
 
-  // check if incomming log is to be processed
-  if ( (reportLevel & REPORT_INFO) || (reportLevel & REPORT_WARN) ||  (reportLevel & REPORT_ERROR) || (reportLevel & REPORT_DEBUG) )
+  // Filter incomming log record (recordType) against log filter (reportFilter). 
+  if ( reportFilter & recordType)
   {
     // Initialise loag date with zeros if Time is not yet known.
     if (ntpTODReceived == false)
