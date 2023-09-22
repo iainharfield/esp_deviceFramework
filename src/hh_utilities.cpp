@@ -18,6 +18,19 @@ bool mqttLog(const char*, bool, bool);
 
 byte reportLevel = REPORT_WARN + REPORT_ERROR;
 
+char * logRecordType [] = {
+    (char*) "UNKWN",    // 0
+    (char*) "INFO",     // 1
+    (char*) "WARN",     // 2
+    (char*) "UNKWN",    // 3
+    (char*) "ERROR",    // 4
+    (char*) "UNKWN",    // 5 
+    (char*) "UNKWN",    // 6
+    (char*) "UNKWN",    // 7
+    (char*) "DEBUG",    // 8
+};
+//#define N_ITEMS     (sizeof(items)/sizeof(char *))
+
 // Publish a log message
 // message  :  a string 
 // type:    : INFO,WARN,ERROR,DEBUG
@@ -28,54 +41,60 @@ byte reportLevel = REPORT_WARN + REPORT_ERROR;
 // MQTTReporting == true then publish 
 //  
 
-
-bool mqttLog(const char* msg, bool mqtt, bool monitor)   // FIXTHIS
+bool mqttLog(const char* msg, byte recordType, bool mqtt, bool monitor)   // FIXTHIS
 {
   //Serial.print("sensor Name: "); Serial.println(sensorName);
-
-  if ( reportLevel & REPORT_INFO)
+  String logRecordType = "UNKNN";
+  
+  if ( recordType & REPORT_INFO)
   {
-    Serial.println("INFO REPORTING");
+    logRecordType = "INFO";
   }
-  if ( reportLevel & REPORT_WARN)
+  else if ( recordType & REPORT_WARN)
   {
-    Serial.println("WARNING REPORTING");
+    logRecordType = "WARN";
   }
-    if ( reportLevel & REPORT_ERROR)
+  else if ( recordType & REPORT_ERROR)
   {
-    Serial.println("ERROR REPORTING");
+    logRecordType = "ERROR";
   }
-    if ( reportLevel & REPORT_DEBUG)
+  else if ( recordType & REPORT_DEBUG)
   {
-    Serial.println("DEBUG REPORTING");
+    logRecordType = "DEBUG";
   }
 
-
-
-
-  if (ntpTODReceived == false)
-    sprintf(ntptod, "%s", "0000-00-00T00:00:00");
-
-  char logMsg[MAX_LOGSTRING_LENGTH]; 
-  memset(logMsg,0, sizeof logMsg);
-
-  sprintf(logMsg, "%s,%s,%s,%s", ntptod, deviceType.c_str(), deviceName.c_str(), msg);    
-  if (mqtt)
+  // check if incomming log is to be processed
+  if ( (reportLevel & REPORT_INFO) || (reportLevel & REPORT_WARN) ||  (reportLevel & REPORT_ERROR) || (reportLevel & REPORT_DEBUG) )
   {
+    // Initialise loag date with zeros if Time is not yet known.
+    if (ntpTODReceived == false)
+    {
+      sprintf(ntptod, "%s", "0000-00-00T00:00:00");
+    }  
+    // Make some space.  
+    // FIXTHIS  check length or something similar
+    char logMsg[MAX_LOGSTRING_LENGTH]; 
+    memset(logMsg,0, sizeof logMsg);
+
+    // Format log header and content
+    sprintf(logMsg, "%s,%s,%s,%s,%s", ntptod, deviceType.c_str(), deviceName.c_str(), logRecordType.c_str(), msg);    
+    if (mqtt)                         // the log is to be published to MQTT topic
+    {
         mqttClient.publish(oh3StateLog, 0, true, logMsg);
-  }
-  if (monitor)
-  {
+    }
+    if (monitor)                      // The log is be sent to Serial port
+    {
         Serial.println(logMsg);
-  }
-  if (telnetReporting == true)
-  {
-          printTelnet(logMsg);
-  }
-
+    }
+    if (telnetReporting == true)      // The log is to be sent to Telnet port
+    {
+        printTelnet(logMsg);
+    }
+  }  
 	return false;
 }
 
+// get day of week as an integer
 int get_weekday(char * str) 
 {
   struct tm tm;

@@ -460,7 +460,7 @@ void printSeparationLine()
 
 void onMqttConnect(bool sessionPresent)
 {
-  mqttLog("MQTT Connected.", true, true);
+  mqttLog("MQTT Connected.", REPORT_INFO, true, true);
   // printTelnet("connected to MQTT");
   //Serial.print("Connected to MQTT broker: ");
   //Serial.print(mqttBrokerIPAddr);
@@ -468,7 +468,7 @@ void onMqttConnect(bool sessionPresent)
   //Serial.println(mqttBrokerPort);
 
   // Serial.print("Session present: "); Serial.println(sessionPresent);
-  mqttLog(willTopic, true, true);
+  mqttLog(willTopic, REPORT_INFO, true, true);
   mqttClient.publish(willTopic, 1, true, "online");
 
   // Subscribe to Managment topics
@@ -537,10 +537,10 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
   mqtt_payload[len] = '\0';
   strncpy(mqtt_payload, payload, len);
 
-  if (reporting == REPORT_DEBUG)
-  {
-    mqttLog(mqtt_payload, true, true);
-  }
+  //if (reporting == REPORT_DEBUG)
+  //{
+    mqttLog(mqtt_payload, REPORT_DEBUG, true, true);
+  //}
 
   /*    Serial.println("Publish received.");
       Serial.print("  topic: ");
@@ -602,10 +602,10 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
       memset(iotCmd[i], 0, sizeof iotCmd[i]);
       strcpy(iotCmd[i], pch);
       pch = strtok(NULL, ",");
-      if (reporting == REPORT_DEBUG)
-      {
-        mqttLog(iotCmd[i], true, true);
-      }
+      //if (reporting == REPORT_DEBUG)
+      //{
+        mqttLog(iotCmd[i], REPORT_DEBUG, true, true);
+      //}
       i++;
     }
     if (strcmp(iotCmd[0], "IOT-IDENTITY") == 0) //
@@ -618,7 +618,7 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
 
       memset(logString, 0, sizeof logString);
       sprintf(logString, "%s%s,%s%s", "ipAddr:", WiFi.localIP().toString().c_str(), "SSID:", Router_SSID.c_str());
-      mqttLog(logString, true, true);
+      mqttLog(logString, REPORT_INFO, true, true);
 
       memset(logString, 0, sizeof logString);
       sprintf(logString, "%s,%s,%s,%s,%s", iotBoard, deviceType.c_str(), deviceName.c_str(), WiFi.localIP().toString().c_str(), Router_SSID.c_str());
@@ -630,7 +630,7 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
       {
         memset(logString, 0, sizeof logString);
         sprintf(logString, "%s%s,%s%s", "ipAddr:", WiFi.localIP().toString().c_str(), "SSID:", Router_SSID.c_str());
-        mqttLog(logString, true, true);
+        mqttLog(logString, REPORT_INFO, true, true);
 
         ESP.restart();
       }
@@ -655,10 +655,10 @@ void todNTPUpdate()
 
   if (getFormattedTime().substring(0, 4) != "1970") // seem to take 30 to 60seconds. MQTT connection should be done by then?  Mmmm not sure I like!
   {
-    if (reporting == REPORT_DEBUG)
-    {
-      mqttLog(ntptod, true, true);
-    }
+    //if (reporting == REPORT_DEBUG)
+    //{
+      mqttLog(ntptod, REPORT_DEBUG, true, true);
+    //}
     // todUpdateTimer.detach();  // TOD updated so stop looking
     ntpTODReceived = true;
   }
@@ -666,7 +666,7 @@ void todNTPUpdate()
 
 void ota_setup()
 {
-  Serial.println("Setting Up OTA");
+  mqttLog("Setting Up OTA", REPORT_INFO, true, true);
   /************************
    * OTA setup
    ************************/

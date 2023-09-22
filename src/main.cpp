@@ -159,7 +159,7 @@ void drdDetected()
 //************************************************************************
 void processCntrlTOD_Ext()
 {
-    mqttLog("Application Processing Controller TOD functions", true, true);
+    mqttLog("Application Processing Controller TOD functions", REPORT_INFO, true, true);
     // Call the TOD function for each controller crteated by this app
     //USCntrlState.processCntrlTOD_Ext();
 }

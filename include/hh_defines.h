@@ -34,6 +34,7 @@
 #define oh3CommandTOD "/house/service/time-of-day"             // Time of day broadcast from OpenHab
 #define oh3StateIOTRefresh "/house/service/iot-device-refresh" // Request Refresh of Contol times ( not needed by all apps)
 
+// FIXTHIS Got to be a smarter way
 #define REPORT_INFO   1
 #define REPORT_WARN   2
 #define REPORT_ERROR  4
