@@ -29,8 +29,7 @@ byte reportFilter = REPORT_WARN | REPORT_ERROR;
 // 
 // TelnetReporting == true then send to Telnet port
 // MQTTReporting == true then publish 
-//  
-
+//
 bool mqttLog(const char* msg, byte recordType, bool mqtt, bool monitor)   // FIXTHIS
 {
   //Serial.print("sensor Name: "); Serial.println(sensorName);
