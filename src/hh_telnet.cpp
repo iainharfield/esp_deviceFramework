@@ -12,6 +12,7 @@ WiFiClient Telnet;
 
 void handleTelnet();
 void printTelnet(String);
+String reportingState();
 
 extern String deviceName;
 extern String deviceType;
@@ -115,57 +116,51 @@ void handleTelnet()
             break;
             case 'd':
                 reportFilter = reportFilter ^ REPORT_DEBUG;       //XOR
-                if (reportFilter & REPORT_DEBUG)
-                {
-                   Telnet.println("DEBUG messages on");
-                }
-                else
-                {
-                  Telnet.println("DEBUG messages off");
-                }
-                //if (reporting == REPORT_INFO )
+                Telnet.println(reportingState().c_str());
+                //if (reportFilter & REPORT_DEBUG)
                 //{
-                //    reporting = REPORT_DEBUG;
-                //    Telnet.println("DEBUG messages on");
-                //} 
+                //   Telnet.println("DEBUG messages on");
+                //}
                 //else
                 //{
-                //    reporting =  REPORT_INFO;
-                //    Telnet.println("DEBUG messages off");
+                //  Telnet.println("DEBUG messages off");
                 //}
             break;
                 case 'e':
                 reportFilter = reportFilter ^ REPORT_ERROR;       //XOR
-                if (reportFilter & REPORT_ERROR)
-                {
-                   Telnet.println("ERROR messages on");
-                }
-                else
-                {
-                  Telnet.println("ERROR messages off");
-                }
+                Telnet.println(reportingState().c_str());
+                //if (reportFilter & REPORT_ERROR)
+                //{
+                //   Telnet.println("ERROR messages on");
+                //}
+                //else
+                //{
+                //  Telnet.println("ERROR messages off");
+                //}
             break;
                 case 'i':
                 reportFilter = reportFilter ^ REPORT_INFO;       //XOR
-                if (reportFilter & REPORT_INFO)
-                {
-                   Telnet.println("INFO messages on");
-                }
-                else
-                {
-                  Telnet.println("INFO messages off");
-                }
+                Telnet.println(reportingState().c_str());
+                //if (reportFilter & REPORT_INFO)
+                //{
+                //   Telnet.println("INFO messages on");
+                //}
+                //else
+                //{
+                //  Telnet.println("INFO messages off");
+                //}
             break;
                 case 'w':
                 reportFilter = reportFilter ^ REPORT_WARN;       //XOR
-                if (reportFilter & REPORT_WARN)
-                {
-                   Telnet.println("WARN messages on");
-                }
-                else
-                {
-                  Telnet.println("WARN messages off");
-                }
+                Telnet.println(reportingState().c_str());
+                //if (reportFilter & REPORT_WARN)
+                //{
+                //   Telnet.println("WARN messages on");
+                //}
+                //else
+                //{
+                //  Telnet.println("WARN messages off");
+                //}
             break;
             case 't':
                 if (telnetReporting == false )
@@ -203,4 +198,42 @@ void handleTelnet()
       }
 
   }
+}
+
+String reportingState()
+{
+  String output = "";
+  if (reportFilter & REPORT_INFO)
+  {
+    output = output + "INFO:ON";
+  }
+  else
+  {
+    output = output + "INFO:OFF";            
+  }
+  if (reportFilter & REPORT_WARN)
+  {
+    output = output + ", WARN:ON";
+  }
+  else
+  {
+    output = output +  ", WARN:OFF";            
+  }
+  if (reportFilter & REPORT_ERROR)
+  {
+    output = output + ", ERROR:ON";
+  }
+  else
+  {
+    output = output +  ", ERROR:OFF";            
+  }
+  if (reportFilter & REPORT_DEBUG)
+  {
+    output = output + ", DEBUG:ON";
+  }
+  else
+  {
+    output = output +  ", DEBUG:OFF";            
+  }
+  return output;
 }
