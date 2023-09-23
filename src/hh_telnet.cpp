@@ -92,6 +92,10 @@ void handleTelnet()
         		  	sprintf(logString, "%s%s\n\r", "MQTT Client:\t",  mqttGetClientID().c_str());
         		  	Telnet.println(logString);
         	  	}
+              sprintf(logString, "%s%s\n\r", "LOG Reporting:\t",  reportingState().c_str());
+        		  Telnet.println(logString);
+
+              // Call out to any Application specific content to append this telnet output
               telnet_extension_1(c);
             break;
            	case 'c':
@@ -117,50 +121,18 @@ void handleTelnet()
             case 'd':
                 reportFilter = reportFilter ^ REPORT_DEBUG;       //XOR
                 Telnet.println(reportingState().c_str());
-                //if (reportFilter & REPORT_DEBUG)
-                //{
-                //   Telnet.println("DEBUG messages on");
-                //}
-                //else
-                //{
-                //  Telnet.println("DEBUG messages off");
-                //}
             break;
                 case 'e':
                 reportFilter = reportFilter ^ REPORT_ERROR;       //XOR
                 Telnet.println(reportingState().c_str());
-                //if (reportFilter & REPORT_ERROR)
-                //{
-                //   Telnet.println("ERROR messages on");
-                //}
-                //else
-                //{
-                //  Telnet.println("ERROR messages off");
-                //}
             break;
                 case 'i':
                 reportFilter = reportFilter ^ REPORT_INFO;       //XOR
                 Telnet.println(reportingState().c_str());
-                //if (reportFilter & REPORT_INFO)
-                //{
-                //   Telnet.println("INFO messages on");
-                //}
-                //else
-                //{
-                //  Telnet.println("INFO messages off");
-                //}
             break;
                 case 'w':
                 reportFilter = reportFilter ^ REPORT_WARN;       //XOR
                 Telnet.println(reportingState().c_str());
-                //if (reportFilter & REPORT_WARN)
-                //{
-                //   Telnet.println("WARN messages on");
-                //}
-                //else
-                //{
-                //  Telnet.println("WARN messages off");
-                //}
             break;
             case 't':
                 if (telnetReporting == false )
