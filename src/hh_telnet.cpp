@@ -28,6 +28,7 @@ extern void setWiFiConfigOnBoot(String);
 
 extern String Router_SSID;
 int reporting = REPORT_INFO;
+byte reportFilter = REPORT_WARN | REPORT_ERROR;
 bool telnetReporting = false;
 
 void printTelnet(String msg)
@@ -44,7 +45,8 @@ void handleTelnet()
 {
     char logString[MAX_LOGSTRING_LENGTH];
 
-  if (TelnetServer.hasClient()){
+  if (TelnetServer.hasClient())
+  {
   	// client is connected
     if (!Telnet || !Telnet.connected()){
       if(Telnet) Telnet.stop();          // client disconnected
@@ -91,7 +93,7 @@ void handleTelnet()
         	  	}
               telnet_extension_1(c);
             break;
-           	case 'w':
+           	case 'c':
                 if (strcmp(wifiConfigOnboot, "NO") == 0)
                 {
         	  	    Telnet.println("Set config WiFi credentials on next reboot");
@@ -112,38 +114,87 @@ void handleTelnet()
         	  	  ESP.restart();
             break;
             case 'd':
-                if (reporting == REPORT_INFO )
+                reportFilter = reportFilter ^ REPORT_DEBUG;       //XOR
+                if (reportFilter & REPORT_DEBUG)
                 {
-                    reporting = REPORT_DEBUG;
-                    Telnet.println("DEBUG messages on");
-                } 
+                   Telnet.println("DEBUG messages on");
+                }
                 else
                 {
-                    reporting =  REPORT_INFO;
-                    Telnet.println("DEBUG messages off");
+                  Telnet.println("DEBUG messages off");
+                }
+                //if (reporting == REPORT_INFO )
+                //{
+                //    reporting = REPORT_DEBUG;
+                //    Telnet.println("DEBUG messages on");
+                //} 
+                //else
+                //{
+                //    reporting =  REPORT_INFO;
+                //    Telnet.println("DEBUG messages off");
+                //}
+            break;
+                case 'e':
+                reportFilter = reportFilter ^ REPORT_ERROR;       //XOR
+                if (reportFilter & REPORT_ERROR)
+                {
+                   Telnet.println("ERROR messages on");
+                }
+                else
+                {
+                  Telnet.println("ERROR messages off");
+                }
+            break;
+                case 'i':
+                reportFilter = reportFilter ^ REPORT_INFO;       //XOR
+                if (reportFilter & REPORT_INFO)
+                {
+                   Telnet.println("INFO messages on");
+                }
+                else
+                {
+                  Telnet.println("INFO messages off");
+                }
+            break;
+                case 'w':
+                reportFilter = reportFilter ^ REPORT_WARN;       //XOR
+                if (reportFilter & REPORT_WARN)
+                {
+                   Telnet.println("WARN messages on");
+                }
+                else
+                {
+                  Telnet.println("WARN messages off");
                 }
             break;
             case 't':
                 if (telnetReporting == false )
                 {
                     telnetReporting = true;
-                    Telnet.println("Telnet DEBUG messages on");
+                    Telnet.println("Telnet message reporting ON. Check logging filters - i,w,e and d");
                 } 
                 else
                 {
                     telnetReporting = false;
-                    Telnet.println("Telnet DEBUG messages off");
+                    Telnet.println("Telnet message reporting OFF. Check logging filters - i,w,e and d");
                 }
             break;
 			case 'h':
         	  	Telnet.println("Help");
-				      Telnet.println("l\t\tList status od IoT device");
-              Telnet.println("d\t\tToggle DEBUG messages over MQTT and Serial");
-              Telnet.println("t\t\tToggle DEBUG messages over telnet");
-				      Telnet.println("r\t\tRe-boot IoT device");
+				      Telnet.println("l\t\tList status and IoT device information");
+              Telnet.println("t\t\tToggle log messages over telnet");
+              Telnet.println("t\t\t");
+              Telnet.println("d\t\tToggle Debug message reporting on or off");
+              Telnet.println("i\t\tToggle INFO message reporting on or off");
+              Telnet.println("w\t\tToggle WARN message reporting on or off");
+              Telnet.println("e\t\tToggle ERROR message reporting on or off");
+              Telnet.println("t\t\t");
 				      Telnet.println("m\t\tDisconnect MQTT broker. Should auto reconnect");
-              Telnet.println("w\t\tSet config WiFi credentials on next reboot");
-              telnet_extensionHelp(c);
+              Telnet.println("c\t\tSet config WiFi credentials on next reboot");
+              Telnet.println("t\t\t");
+				      Telnet.println("r\t\tRe-boot IoT device");
+
+              telnet_extensionHelp(c);   // Extend menu via application user exit
             break;
           	default:
               telnet_extension_2(c); 	

@@ -13,10 +13,11 @@ extern String deviceType;
 extern char ntptod[MAX_CFGSTR_LENGTH];
 extern bool ntpTODReceived;
 extern bool telnetReporting;
+extern byte reportFilter;
 
 bool mqttLog(const char*, bool, bool);
 
-byte reportFilter = REPORT_WARN | REPORT_ERROR;
+
 
 //#define N_ITEMS     (sizeof(items)/sizeof(char *))
 
