@@ -7,9 +7,6 @@
 #include <Arduino.h>
 #include <AsyncMqttClient_Generic.hpp>
 //
-// Defined in utilities
-//
-extern bool mqttLog(const char *, bool, bool);
 // defined in telnet.cpp
 extern int reporting;
 extern bool telnetReporting;
@@ -341,12 +338,14 @@ public:
 		mqtt_payload[len] = '\0';
 		strncpy(mqtt_payload, payload, len);
 
-		if (reporting == REPORT_DEBUG)
-		{
-			mqttLog("Received Topic and payload: ", true, true);
-			mqttLog(topic, true, true);
-			mqttLog(mqtt_payload, true, true);
-		}
+		//if (reporting == REPORT_DEBUG)
+		//{
+			String msg = "Received MQTT. Topic: " + (String)topic + " Payload: " + (String)mqtt_payload;
+            mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+			//mqttLog("Received Topic and payload: ", true, true);
+			//mqttLog(topic, true, true);
+			//mqttLog(mqtt_payload, true, true);
+		//}
 
 		/****************************************************
 		 * Week days Times received
@@ -354,7 +353,7 @@ public:
 		 ****************************************************/
 		if (strcmp(topic, getWDCntrlTimesTopic().c_str()) == 0)
 		{
-			mqttLog("WD Control times Received", true, true);
+			mqttLog("WD Control times Received", REPORT_INFO, true, true);
 			processCntrlTimes(mqtt_payload, WDcntrlTimes, WDlcntrlTimes);
 
 			setWDCntrlTimesReceived(true);
@@ -366,7 +365,7 @@ public:
 		 ****************************************************/
 		else if (strcmp(topic, getWECntrlTimesTopic().c_str()) == 0)
 		{
-			mqttLog("WE Control times Received", true, true);
+			mqttLog("WE Control times Received", REPORT_INFO, true, true);
 			processCntrlTimes(mqtt_payload, WEcntrlTimes, WElcntrlTimes);
 
 			setWECntrlTimesReceived(true);
@@ -386,7 +385,7 @@ public:
 			if (reporting == REPORT_DEBUG)
 			{
 				String msg = "getWDUIcommandStateTopic : " + getWDUIcommandStateTopic();
-				mqttLog(msg.c_str(), true, true);
+				mqttLog(msg.c_str(), REPORT_INFO, true, true);
 			}
 			WDcommandReceived = true;
 
@@ -412,11 +411,12 @@ public:
 			if (reporting == REPORT_DEBUG)
 			{
 				String msg = "getWEUIcommandStateTopic : " + getWEUIcommandStateTopic();
-				mqttLog(msg.c_str(), true, true);
+				mqttLog(msg.c_str(), REPORT_INFO, true, true);
 			}
 			WEcommandReceived = true;
 			if (processCntrlMessage(mqtt_payload, "ON", "OFF", getWEUIcommandStateTopic().c_str()) == true)
 			{
+				//FIXTHIS
 				Serial.print("ERROR: Unknown message - ");
 				Serial.print(mqtt_payload);
 				Serial.print(" - received for topic ");
@@ -498,11 +498,11 @@ public:
 	 ************************************************************/
 	bool processCntrlMessage(char *mqttMessage, const char *onMessage, const char *offMessage, const char *commandTopic)
 	{
-		if (reporting == REPORT_DEBUG)
-		{
-			String msg = cntrlName + ",processCntrlMessage : " + (String)commandTopic + " " + (String)mqttMessage;
-			mqttLog(msg.c_str(), true, true);
-		}
+		
+		
+		String msg = cntrlName + ",processCntrlMessage : " + (String)commandTopic + " " + (String)mqttMessage;
+		mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+
 		if (strcmp(mqttMessage, "ON") == 0)
 		{
 			if (strcmp(commandTopic, getWDUIcommandStateTopic().c_str()) == 0)
@@ -552,7 +552,7 @@ public:
 				if (getOutputState() == 0)
 				{
 					String logRecord = "NEXT receive onORoff returned true. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
-					mqttLog(logRecord.c_str(), true, true);
+					mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 					setWDHoldState(1); // the state to hold while in NEXTMDDE
 
@@ -561,7 +561,7 @@ public:
 				else
 				{
 					String logRecord = "NEXT receive onORoff returned false. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
-					mqttLog(logRecord.c_str(), true, true);
+					mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 					setWDHoldState(0);		 // the state to hold while in NEXTMDDE
 					app_WD_off(cntrlObjRef); // Set off because we want OFF until the end of the next ON
 				}
@@ -589,7 +589,7 @@ public:
 			if (strcmp(commandTopic, getWDUIcommandStateTopic().c_str()) == 0)
 			{
 				String msg = cntrlName + ",processCntrlMessage: SET received from: " + getWDUIcommandStateTopic() ;
-				mqttLog(msg.c_str(), true, true);
+				mqttLog(msg.c_str(), REPORT_INFO, true, true);
 
 				setWDRunMode(AUTOMODE);
 				setWDHoldState(9);
@@ -605,7 +605,7 @@ public:
 			else if (strcmp(commandTopic, getWEUIcommandStateTopic().c_str()) == 0)
 			{
 				String msg = cntrlName + ",processCntrlMessage: SET received from: " + getWEUIcommandStateTopic() ;
-				mqttLog(msg.c_str(), true, true);
+				mqttLog(msg.c_str(), REPORT_INFO, true, true);
 
 				setWERunMode(AUTOMODE);
 				setWEHoldState(9);
@@ -723,7 +723,7 @@ public:
 		int wezone = 9;
 
 		String msg = cntrlName + " Contoller Processing TOD";
-		mqttLog(msg.c_str(), true, true);
+		mqttLog(msg.c_str(), REPORT_INFO, true, true);
 
 		char logString[MAX_LOGSTRING_LENGTH];
 
@@ -737,7 +737,7 @@ public:
 				wdzone = getWDZone();
 
 				String logRecord = "RunMode: " + (String)getWDRunMode() + "SwitchBack: " + (String)getWDSwitchBack() + " Zone: " + (String)wdzone + " onOroff: " + (String)onORoffstate + " Hold: " + getWDHoldState();
-				mqttLog(logRecord.c_str(), true, true);
+				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				if (getWDHoldState() == onORoffstate)
 				{
@@ -753,7 +753,7 @@ public:
 				wezone = getWEZone();
 
 				String logRecord = "SwitchBack: " + (String)getWESwitchBack() + " Zone: " + (String)wezone + " onOroff: " + (String)onORoffstate + " Hold: " + getWEHoldState();
-				mqttLog(logRecord.c_str(), true, true);
+				mqttLog(logRecord.c_str(), REPORT_WARN, true, true);
 
 				if (getWEHoldState() == onORoffstate)
 				{
@@ -796,7 +796,7 @@ public:
 				app_WD_on(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently ON");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			//else if (getWDRunMode() == OFFMODE)
 			if (getWDRunMode() == OFFMODE)
@@ -805,7 +805,7 @@ public:
 				app_WD_off(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently OFF");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			//else if (getWERunMode() == ONMODE)
 			if (getWERunMode() == ONMODE)
@@ -814,7 +814,7 @@ public:
 				app_WE_on(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently ON");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			//else if (getWERunMode() == OFFMODE)
 			if (getWERunMode() == OFFMODE)
@@ -822,13 +822,13 @@ public:
 				app_WE_off(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently OFF");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			else
 			{
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Unknown running mode ");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_WARN, true, true);
 			}
 		}
 	}
@@ -858,41 +858,41 @@ public:
 		{
 			memset(logString, 0, sizeof logString);
 			sprintf(logString, "%s,%s,%s,%s", ntptod, espDevice.getType().c_str(), espDevice.getName().c_str(), "Waiting for all initialisation messages to be received");
-			mqttLog(logString, true, true);
+			mqttLog(logString, REPORT_INFO, true, true);
 
 			if (ohTODReceived == false)
 			{
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s,%s", ntptod, espDevice.getType().c_str(), espDevice.getName().c_str(), "Time of Day not yet received");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			if (getWDCntrlTimesReceived() == false)
 			{
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s,%s", ntptod, espDevice.getType().c_str(), espDevice.getName().c_str(), "Weekday control times not yet received");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			if (getWECntrlTimesReceived() == false)
 			{
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s,%s", ntptod, espDevice.getType().c_str(), espDevice.getName().c_str(), "Weekend control times not yet received");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			if (WDcommandReceived == false) // && coreServices.getWeekDayState() == true)
 			{
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s,%s", ntptod, espDevice.getType().c_str(), espDevice.getName().c_str(), "Weekday operating mode not yet received");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			if (WEcommandReceived == false) // && coreServices.getWeekDayState() == false)
 			{
 				memset(logString, 0, sizeof logString);
 				sprintf(logString, "%s,%s,%s,%s", ntptod, espDevice.getType().c_str(), espDevice.getName().c_str(), "Weekend operating mode not yet received");
-				mqttLog(logString, true, true);
+				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			// FIXTHIS ... WD and WE python returns both
 			String msg = "Requesting configuration from Database";
-			mqttLog(msg.c_str(), true, true);
+			mqttLog(msg.c_str(), REPORT_INFO, true, true);
 			mqttClient.publish(oh3StateIOTRefresh, 0, true, getRefreshID().c_str());
 			return false;
 		}
