@@ -26,6 +26,7 @@ extern void telnet_extension_1(char);
 extern void telnet_extension_2(char);
 extern void telnet_extensionHelp(char);
 extern void setWiFiConfigOnBoot(String);
+extern String MQTTDisconnectMessage;
 
 extern String Router_SSID;
 int reporting = REPORT_INFO;
@@ -93,6 +94,8 @@ void handleTelnet()
         		  	Telnet.println(logString);
         	  	}
               sprintf(logString, "%s%s\n\r", "LOG Reporting:\t",  reportingState().c_str());
+        		  Telnet.println(logString);
+              sprintf(logString, "%s%s\n\r", "MQTT Disconnected Message:\t",  MQTTDisconnectMessage.c_str());
         		  Telnet.println(logString);
 
               // Call out to any Application specific content to append this telnet output

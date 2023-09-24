@@ -31,6 +31,9 @@ extern int ohTimenow;
 extern bool ohTODReceived;
 extern devConfig espDevice;
 
+// defined in utilities.cpp
+extern bool mqttLog(const char* msg, byte recordType, bool mqtt, bool monitor);
+
 //
 // Application User exits
 //

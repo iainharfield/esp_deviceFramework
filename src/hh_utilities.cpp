@@ -15,8 +15,8 @@ extern bool ntpTODReceived;
 extern bool telnetReporting;
 extern byte reportFilter;
 
-bool mqttLog(const char*, bool, bool);
-
+//bool mqttLog(const char*, bool, bool);
+bool mqttLog(const char* msg, byte recordType, bool mqtt, bool monitor);
 
 
 //#define N_ITEMS     (sizeof(items)/sizeof(char *))

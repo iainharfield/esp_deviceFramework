@@ -85,6 +85,9 @@ extern String deviceName;
 extern bool telnetReporting;
 extern int reporting;
 
+// implemented in utilities.cpp
+extern bool mqttLog(const char* msg, byte recordType, bool mqtt, bool monitor);
+
 // const char *PubTopic  = "async-mqtt/ESP8266_Pub";               // Topic to publish
 
 ///WiFiEventHandler wifiConnectHandler;
@@ -99,6 +102,7 @@ AsyncMqttClient mqttClient;
 char mqttClientID[MAX_CFGSTR_LENGTH];
 char willTopic[MAX_CFGSTR_LENGTH];
 uint16_t packetIdSub;
+String MQTTDisconnectMessage = "";
 
 char ntptod[MAX_CFGSTR_LENGTH];
 
@@ -444,7 +448,8 @@ void onWifiConnected()
 //void onWifiDisconnect(const WiFiEventStationModeDisconnected &event)
 void onWifiDisconnected()
 {
-  Serial.println("Disconnected from Wi-Fi.");
+  mqttLog("Disconnected from Wi-Fi.", REPORT_ERROR ,false, true);
+  //Serial.println("Disconnected from Wi-Fi.");
   mqttReconnectTimer.detach(); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
   wifiReconnectTimer.once(2, connectToWifi);
 
@@ -461,13 +466,6 @@ void printSeparationLine()
 void onMqttConnect(bool sessionPresent)
 {
   mqttLog("MQTT Connected.", REPORT_INFO, true, true);
-  // printTelnet("connected to MQTT");
-  //Serial.print("Connected to MQTT broker: ");
-  //Serial.print(mqttBrokerIPAddr);
-  //Serial.print(", port: ");
-  //Serial.println(mqttBrokerPort);
-
-  // Serial.print("Session present: "); Serial.println(sessionPresent);
   mqttLog(willTopic, REPORT_INFO, true, true);
   mqttClient.publish(willTopic, 1, true, "online");
 
@@ -489,8 +487,9 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
 {
   (void)reason;
 
-  String msg = "Disconnected from MQTT. Reason: " + String(static_cast<uint8_t>(reason));
-  printTelnet(msg);
+  MQTTDisconnectMessage = "Disconnected from MQTT. Reason: " + String(static_cast<uint8_t>(reason));
+  mqttLog(MQTTDisconnectMessage.c_str(), REPORT_ERROR, false, true);
+  //printTelnet(MQTTDisconnectMessage);
 
   if (WiFi.isConnected())
   {
