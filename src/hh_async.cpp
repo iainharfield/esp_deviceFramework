@@ -536,10 +536,7 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
   mqtt_payload[len] = '\0';
   strncpy(mqtt_payload, payload, len);
 
-  //if (reporting == REPORT_DEBUG)
-  //{
-    mqttLog(mqtt_payload, REPORT_DEBUG, true, true);
-  //}
+  mqttLog(mqtt_payload, REPORT_DEBUG, true, true);
 
   /*    Serial.println("Publish received.");
       Serial.print("  topic: ");
@@ -601,10 +598,9 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
       memset(iotCmd[i], 0, sizeof iotCmd[i]);
       strcpy(iotCmd[i], pch);
       pch = strtok(NULL, ",");
-      //if (reporting == REPORT_DEBUG)
-      //{
-        mqttLog(iotCmd[i], REPORT_DEBUG, true, true);
-      //}
+
+      //mqttLog(iotCmd[i], REPORT_DEBUG, true, true);
+
       i++;
     }
     if (strcmp(iotCmd[0], "IOT-IDENTITY") == 0) //
@@ -654,10 +650,7 @@ void todNTPUpdate()
 
   if (getFormattedTime().substring(0, 4) != "1970") // seem to take 30 to 60seconds. MQTT connection should be done by then?  Mmmm not sure I like!
   {
-    //if (reporting == REPORT_DEBUG)
-    //{
-      mqttLog(ntptod, REPORT_DEBUG, true, true);
-    //}
+    //mqttLog(ntptod, REPORT_DEBUG, true, true);
     // todUpdateTimer.detach();  // TOD updated so stop looking
     ntpTODReceived = true;
   }
