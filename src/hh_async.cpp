@@ -399,7 +399,8 @@ void connectToWifi()
 
 void connectToMqtt()
 {
-  Serial.println("Platform: Connecting to MQTT...");
+  //Serial.println("Platform: Connecting to MQTT...");
+  mqttLog("Platform: Connecting to MQTT...", REPORT_INFO, true, true);
 
   memset(willTopic, 0, sizeof willTopic);
   String dt = espDevice.getType();
