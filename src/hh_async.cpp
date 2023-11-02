@@ -377,6 +377,8 @@ void mqttDisconnect()
 
 bool mqttGetConnectedStatus()
 {
+  mqttLog("Platform: Connected to MQTT", REPORT_INFO, true, true);
+
   return mqttClient.connected();
 }
 String mqttGetClientID()
