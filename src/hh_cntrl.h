@@ -552,8 +552,8 @@ public:
 				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
-				//if (getOutputState() == 0)
-				if (onORoff() == true) // if true then we are in a heating zone. Next means stay switched on until next zone.
+				if (getOutputState() == 0)
+				//if (onORoff() == true) // if true then we are in a heating zone. Next means stay switched on until next zone.
 				{
 					setWDHoldState(1); // the state to hold while in NEXTMDDE (Heat ON)
 					app_WD_on(cntrlObjRef);
@@ -571,7 +571,8 @@ public:
 				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
 				// mqttClient.publish(getWECntrlRunTimesStateTopic().c_str(), 0, true, "ON"); // FIXTHIS WD or WE
-				if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
+				//if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
+				if (getOutputState() == 0)
 				{
 					setWEHoldState(1);
 					app_WE_on(cntrlObjRef); // Set off because we want OFF until the end of the next OFF
