@@ -545,12 +545,14 @@ public:
 		{
 			if (strcmp(commandTopic, getWDUIcommandStateTopic().c_str()) == 0)
 			{
+                String logRecord = "NEXT received. Zone = " + (String)getWDZone() + ", RunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
+				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				setWDRunMode(NEXTMODE);
 				setWDSwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next OFF (don't switch back when this zone ends)
 
 				//String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
-				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + runmodeText(getWDRunMode()) + " Output State: " + (String)getOutputState();
+				logRecord = "NEXT received. Zone = " + (String)getWDZone() + ", RunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				if (getOutputState() == 0) 		// 0 = Off
@@ -567,10 +569,13 @@ public:
 			}
 			else if (strcmp(commandTopic, getWEUIcommandStateTopic().c_str()) == 0)
 			{
+				String logRecord = "NEXT received. Zone = " + (String)getWEZone() + ", RunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
+				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+
 				setWERunMode(NEXTMODE);
 				setWESwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next ON (don't switch back when this zone ends)
 				//String logRecord = "NEXT received. Zone = " + (String)getWEZone() + " RunMode: " + (String)getWERunMode() + " Output State: " + (String)getOutputState();
-				String logRecord = "NEXT received. Zone = " + (String)getWEZone() + " RunMode: " + runmodeText(getWERunMode()) + " Output State: " + (String)getOutputState();
+				logRecord = "NEXT received. Zone = " + (String)getWEZone() + ", RunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
 				// mqttClient.publish(getWECntrlRunTimesStateTopic().c_str(), 0, true, "ON"); // FIXTHIS WD or WE
 				//if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
@@ -635,6 +640,7 @@ public:
 
 	/***********************************************************************
 	 * Determines if control should be ON or OFF based on current zone times
+	 * and the day of the week i.e. weekday or weekend.
 	 * Uses and updates global variables:
 	 *    weekDay,
 	 *    lcntrlTimes,
@@ -733,16 +739,22 @@ public:
 		// Check all WD and WE times have been received before doing anything
 		if (runTimeReceivedCheck() == true)
 		{
+			String logRecord = "WDRunMode: " + (String)getWDRunMode() + " WDSwitchBack: " + (String)getWDSwitchBack() + "WDZone: " + (String)wdzone + " WDonOroff: " + (String)onORoffstate + " WDHold: " + getWDHoldState();
+			mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+			logRecord = "WERunMode: " + (String)getWDRunMode() + "WESwitchBack: " + (String)getWESwitchBack() + " WEZone: " + (String)wezone + " WEonOroff: " + (String)onORoffstate + " WEHold: " + getWEHoldState();
+			mqttLog(logRecord.c_str(), REPORT_WARN, true, true);
+
+			
 			// if (getWDRunMode() == NEXTMODE && coreServices.getWeekDayState() == true)
 			if (getWDRunMode() == NEXTMODE)
 			{
-				onORoffstate = onORoff();
+				onORoffstate = onORoff(); //The Programmed values - true(1) to switch ON, false(0) to switch OFF
 				wdzone = getWDZone();
 
-				String logRecord = "RunMode: " + (String)getWDRunMode() + " SwitchBack: " + (String)getWDSwitchBack() + " Zone: " + (String)wdzone + " onOroff: " + (String)onORoffstate + " Hold: " + getWDHoldState();
-				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+				//String logRecord = "RunMode: " + (String)getWDRunMode() + " SwitchBack: " + (String)getWDSwitchBack() + " Zone: " + (String)wdzone + " onOroff: " + (String)onORoffstate + " Hold: " + getWDHoldState();
+				//mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
-				if (getWDHoldState() == onORoffstate)
+				if (getWDHoldState() == onORoffstate) // If same then in the next heating zone so go back and run like normal
 				{
 					setWDSwitchBack(SBON); // SBON means switch back to normal operation at the end of a gap period
 					setWDRunMode(AUTOMODE);
@@ -755,8 +767,8 @@ public:
 				onORoffstate = onORoff();
 				wezone = getWEZone();
 
-				String logRecord = "SwitchBack: " + (String)getWESwitchBack() + " Zone: " + (String)wezone + " onOroff: " + (String)onORoffstate + " Hold: " + getWEHoldState();
-				mqttLog(logRecord.c_str(), REPORT_WARN, true, true);
+				//String logRecord = "SwitchBack: " + (String)getWESwitchBack() + " Zone: " + (String)wezone + " onOroff: " + (String)onORoffstate + " Hold: " + getWEHoldState();
+				//mqttLog(logRecord.c_str(), REPORT_WARN, true, true);
 
 				if (getWEHoldState() == onORoffstate)
 				{
