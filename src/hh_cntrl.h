@@ -744,7 +744,7 @@ public:
 			String logRecord = "WDRunMode: " + (String)getWDRunMode() + ", WDSwitchBack: " + (String)getWDSwitchBack() + ", WDZone: " + (String)wdzone + ", WDonOroff: " + (String)onORoffstate + ", WDHold: " + getWDHoldState();
 			mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 			logRecord = "WERunMode: " + (String)getWDRunMode() + ", WESwitchBack: " + (String)getWESwitchBack() + ", WEZone: " + (String)wezone + ", WEonOroff: " + (String)onORoffstate + ", WEHold: " + getWEHoldState();
-			mqttLog(logRecord.c_str(), REPORT_WARN, true, true);
+			mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 
 			// if (getWDRunMode() == NEXTMODE && coreServices.getWeekDayState() == true)
