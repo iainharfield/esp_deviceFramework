@@ -569,7 +569,8 @@ public:
 			{
 				setWERunMode(NEXTMODE);
 				setWESwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next ON (don't switch back when this zone ends)
-				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
+				//String logRecord = "NEXT received. Zone = " + (String)getWEZone() + " RunMode: " + (String)getWERunMode() + " Output State: " + (String)getOutputState();
+				String logRecord = "NEXT received. Zone = " + (String)getWEZone() + " RunMode: " + runmodeText(getWERunMode()) + " Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
 				// mqttClient.publish(getWECntrlRunTimesStateTopic().c_str(), 0, true, "ON"); // FIXTHIS WD or WE
 				//if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
