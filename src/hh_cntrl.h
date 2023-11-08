@@ -549,20 +549,18 @@ public:
 				setWDRunMode(NEXTMODE);
 				setWDSwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next OFF (don't switch back when this zone ends)
 
-				if (getOutputState() == 0)
+				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
+				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+
+				//if (getOutputState() == 0)
+				if (onORoff() == true) // if true then we are in a heating zone. Next means stay switched on until next zone.
 				{
-					String logRecord = "NEXT receive onORoff returned true. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
-					mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
-
-					setWDHoldState(1); // the state to hold while in NEXTMDDE
-
+					setWDHoldState(1); // the state to hold while in NEXTMDDE (Heat ON)
 					app_WD_on(cntrlObjRef);
 				} // Set on because we want ON until the end of the next OFF
 				else
 				{
-					String logRecord = "NEXT receive onORoff returned false. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
-					mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
-					setWDHoldState(0);		 // the state to hold while in NEXTMDDE
+					setWDHoldState(0);		 // the state to hold while in NEXTMDDE (Heat OFF)
 					app_WD_off(cntrlObjRef); // Set off because we want OFF until the end of the next ON
 				}
 			}
@@ -570,14 +568,16 @@ public:
 			{
 				setWERunMode(NEXTMODE);
 				setWESwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next ON (don't switch back when this zone ends)
+				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
+				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
 				// mqttClient.publish(getWECntrlRunTimesStateTopic().c_str(), 0, true, "ON"); // FIXTHIS WD or WE
-				if (onORoff() == true)
+				if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
 				{
 					setWEHoldState(1);
 					app_WE_on(cntrlObjRef); // Set off because we want OFF until the end of the next OFF
 				}
 				else
-				{
+				{			
 					setWEHoldState(0);
 					app_WE_off(cntrlObjRef);
 				}
@@ -824,12 +824,12 @@ public:
 				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently OFF");
 				mqttLog(logString, REPORT_INFO, true, true);
 			}
-			else
-			{
-				memset(logString, 0, sizeof logString);
-				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Unknown running mode ");
-				mqttLog(logString, REPORT_WARN, true, true);
-			}
+			//else
+			//{
+			//	memset(logString, 0, sizeof logString);
+			//	sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Unknown running mode ");
+			//	mqttLog(logString, REPORT_WARN, true, true);
+			//}
 		}
 	}
 	/*
