@@ -545,14 +545,14 @@ public:
 		{
 			if (strcmp(commandTopic, getWDUIcommandStateTopic().c_str()) == 0)
 			{
-                String logRecord = "NEXT received. Zone = " + (String)getWDZone() + ", RunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
+                String logRecord = "NEXT received. WDZone = " + (String)getWDZone() + ", WDRunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				setWDRunMode(NEXTMODE);
 				setWDSwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next OFF (don't switch back when this zone ends)
 
 				//String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
-				logRecord = "NEXT received. Zone = " + (String)getWDZone() + ", RunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
+				logRecord = "NEXT received. WDZone = " + (String)getWDZone() + ", WDRunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				if (getOutputState() == 0) 		// 0 = Off
@@ -569,14 +569,16 @@ public:
 			}
 			else if (strcmp(commandTopic, getWEUIcommandStateTopic().c_str()) == 0)
 			{
-				String logRecord = "NEXT received. Zone = " + (String)getWEZone() + ", RunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
+				String logRecord = "NEXT received. WEZone = " + (String)getWEZone() + ", WERunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				setWERunMode(NEXTMODE);
 				setWESwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next ON (don't switch back when this zone ends)
+
 				//String logRecord = "NEXT received. Zone = " + (String)getWEZone() + " RunMode: " + (String)getWERunMode() + " Output State: " + (String)getOutputState();
-				logRecord = "NEXT received. Zone = " + (String)getWEZone() + ", RunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
+				logRecord = "NEXT received. WEZone = " + (String)getWEZone() + ", WERunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
+
 				// mqttClient.publish(getWECntrlRunTimesStateTopic().c_str(), 0, true, "ON"); // FIXTHIS WD or WE
 				//if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
 				if (getOutputState() == 0)		// 0 = Off
@@ -739,12 +741,12 @@ public:
 		// Check all WD and WE times have been received before doing anything
 		if (runTimeReceivedCheck() == true)
 		{
-			String logRecord = "WDRunMode: " + (String)getWDRunMode() + " WDSwitchBack: " + (String)getWDSwitchBack() + "WDZone: " + (String)wdzone + " WDonOroff: " + (String)onORoffstate + " WDHold: " + getWDHoldState();
+			String logRecord = "WDRunMode: " + (String)getWDRunMode() + ", WDSwitchBack: " + (String)getWDSwitchBack() + ", WDZone: " + (String)wdzone + ", WDonOroff: " + (String)onORoffstate + ", WDHold: " + getWDHoldState();
 			mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
-			logRecord = "WERunMode: " + (String)getWDRunMode() + "WESwitchBack: " + (String)getWESwitchBack() + " WEZone: " + (String)wezone + " WEonOroff: " + (String)onORoffstate + " WEHold: " + getWEHoldState();
+			logRecord = "WERunMode: " + (String)getWDRunMode() + ", WESwitchBack: " + (String)getWESwitchBack() + ", WEZone: " + (String)wezone + ", WEonOroff: " + (String)onORoffstate + ", WEHold: " + getWEHoldState();
 			mqttLog(logRecord.c_str(), REPORT_WARN, true, true);
 
-			
+
 			// if (getWDRunMode() == NEXTMODE && coreServices.getWeekDayState() == true)
 			if (getWDRunMode() == NEXTMODE)
 			{
