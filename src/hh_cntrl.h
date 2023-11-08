@@ -44,7 +44,7 @@ extern void app_WE_auto(void *);
 
 void processCntrlTimes(char *, char (&ptr)[6][10], int lptr[6]);
 bool onMqttMessageCntrlExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total);
-
+String runmodeText(int);
 
 class cntrlState
 {
@@ -549,15 +549,16 @@ public:
 				setWDRunMode(NEXTMODE);
 				setWDSwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next OFF (don't switch back when this zone ends)
 
-				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
+				//String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
+				String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + runmodeText(getWDRunMode()) + " Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
-				if (getOutputState() == 0)
+				if (getOutputState() == 0) 		// 0 = Off
 				//if (onORoff() == true) // if true then we are in a heating zone. Next means stay switched on until next zone.
 				{
-					setWDHoldState(1); // the state to hold while in NEXTMDDE (Heat ON)
-					app_WD_on(cntrlObjRef);
-				} // Set on because we want ON until the end of the next OFF
+					setWDHoldState(1); 			// the state to hold while in NEXTMDDE (Heat ON)
+					app_WD_on(cntrlObjRef); 	// Switch Heat on until the end of the next heaing zone OFF time
+				} 
 				else
 				{
 					setWDHoldState(0);		 // the state to hold while in NEXTMDDE (Heat OFF)
@@ -572,7 +573,7 @@ public:
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
 				// mqttClient.publish(getWECntrlRunTimesStateTopic().c_str(), 0, true, "ON"); // FIXTHIS WD or WE
 				//if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
-				if (getOutputState() == 0)
+				if (getOutputState() == 0)		// 0 = Off
 				{
 					setWEHoldState(1);
 					app_WE_on(cntrlObjRef); // Set off because we want OFF until the end of the next OFF
@@ -737,7 +738,7 @@ public:
 				onORoffstate = onORoff();
 				wdzone = getWDZone();
 
-				String logRecord = "RunMode: " + (String)getWDRunMode() + "SwitchBack: " + (String)getWDSwitchBack() + " Zone: " + (String)wdzone + " onOroff: " + (String)onORoffstate + " Hold: " + getWDHoldState();
+				String logRecord = "RunMode: " + (String)getWDRunMode() + " SwitchBack: " + (String)getWDSwitchBack() + " Zone: " + (String)wdzone + " onOroff: " + (String)onORoffstate + " Hold: " + getWDHoldState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				if (getWDHoldState() == onORoffstate)
@@ -982,5 +983,22 @@ public:
 		printTelnet((String) " ");
 	}
 };
+
+String runmodeText(int rm)
+{
+/*
+#define AUTOMODE    0 Normal running mode - Heating times are based on the 3 time zones
+#define NEXTMODE    1 Advances the control time to the next zone. FIX-THIS: Crap description
+#define ONMODE      2 Permanently ON.  Heat is permanently requested. Zones times are ignored
+#define OFFMODE     3 Permanently OFF.  Heat is never requested. Zones times are ignored
+#define UNKNOWNMODE 4 set at start up 
+*/
+
+if (rm == 0) return "AUTOMODE";
+else if (rm == 1) return "NEXTMODE";
+else if (rm == 2) return "ONMODE";
+else if (rm == 3) return "OFFMODE";
+else return "UNKNOWNMODE";
+}
 
 #endif

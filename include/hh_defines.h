@@ -43,10 +43,10 @@
 //***************************************************************
 // Controller Specific MQTT Topics and config
 //***************************************************************
-#define AUTOMODE 0 // Normal running mode - Heating times are based on the 3 time zones
-#define NEXTMODE 1 // Advances the control time to the next zone. FIX-THIS: Crap description
-#define ONMODE 2   // Permanently ON.  Heat is permanently requested. Zones times are ignored
-#define OFFMODE 3  // Permanently OFF.  Heat is never requested. Zones times are ignored
+#define AUTOMODE    0 // Normal running mode - Heating times are based on the 3 time zones
+#define NEXTMODE    1 // Advances the control time to the next zone. FIX-THIS: Crap description
+#define ONMODE      2   // Permanently ON.  Heat is permanently requested. Zones times are ignored
+#define OFFMODE     3  // Permanently OFF.  Heat is never requested. Zones times are ignored
 #define UNKNOWNMODE 4 // set at start up 
 
 #define SBUNKOWN 0
