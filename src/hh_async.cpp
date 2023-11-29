@@ -417,7 +417,7 @@ void connectToMqtt()
 
   mqttClient.setClientId(mqttClientID);
   mqttClient.setWill(willTopic, 1, true, "Offline"); // Check Case
-  mqttClient.connect();
+  mqttClient.connect(); //FIXTHIS what happens if connection to MQTT Broker fails?
 }
 
 
@@ -453,7 +453,7 @@ void onWifiDisconnected()
 {
   mqttLog("Disconnected from Wi-Fi.", REPORT_ERROR ,false, true);
   //Serial.println("Disconnected from Wi-Fi.");
-  mqttReconnectTimer.detach(); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
+  mqttReconnectTimer.detach(); // (Mmm not sure about this in error cases.) Ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
   wifiReconnectTimer.once(2, connectToWifi);
 
   todUpdateTimer.detach(); // id no wifi dont use NTP - seems to cause huge delays
@@ -468,6 +468,7 @@ void printSeparationLine()
 
 void onMqttConnect(bool sessionPresent)
 {
+  mqttReconnectTimer.detach(); // Stop mqtt reconnection 
   mqttLog("MQTT Connected.", REPORT_INFO, true, true);
   mqttLog(willTopic, REPORT_INFO, true, true);
   mqttClient.publish(willTopic, 1, true, "online");
@@ -490,13 +491,18 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
 {
   (void)reason;
 
-  MQTTDisconnectMessage = "Disconnected from MQTT. Reason: " + String(static_cast<uint8_t>(reason));
+  MQTTDisconnectMessage = "Disconnected from MQTT. Reason:" + String(static_cast<uint8_t>(reason));
   mqttLog(MQTTDisconnectMessage.c_str(), REPORT_ERROR, false, true);
   //printTelnet(MQTTDisconnectMessage);
 
-  if (WiFi.isConnected())
+  if (WiFi.isConnected()) //true means STA connected
   {
-    mqttReconnectTimer.once(2, connectToMqtt);
+    // FIXTHIS ADDED
+    MQTTDisconnectMessage = "Reconnecting to MQTT Broker. Disconnect Reason:" + String(static_cast<uint8_t>(reason));
+    mqttLog(MQTTDisconnectMessage.c_str(), REPORT_ERROR, false, true);
+    // END
+    //mqttReconnectTimer.once(2, connectToMqtt);   //FIXTYHIS : Set up a repeating ticker and cancel when connected.  If "once" fails, MQTT connection is never established
+    mqttReconnectTimer.attach(2, connectToMqtt);   // detached in two cases. 1) wiFi Disconnected 2) MQTT Connected
   }
 }
 
