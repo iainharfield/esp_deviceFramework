@@ -55,6 +55,7 @@ class cntrlState
 	int WDHoldState;
 	bool WDcntrlTimesReceived = false;
 	bool WDcommandReceived = false;
+	bool WDBypassMode = true;
 
 	int WErunMode;
 	int WEswitchBack;
@@ -62,6 +63,7 @@ class cntrlState
 	int WEHoldState;
 	bool WEcntrlTimesReceived = false;
 	bool WEcommandReceived = false;
+	bool WEBypassMode = true;
 
 	int WDlcntrlTimes[6];
 	char WDcntrlTimes[6][10]{"0000", "0100", "0200", "0300", "0400", "0600"}; //  how big is each array element? 6 elements each element 10 characters long (9 + 1 for /0)
@@ -350,6 +352,14 @@ public:
 	{
 		return WEHoldState;
 	}
+	bool getWEBypassMode()
+	{
+		return WEBypassMode;
+	}
+	bool getWDBypassMode()
+	{
+		return WDBypassMode;
+	}
 	//****************************************************************
 	// Process any application specific inbound MQTT messages
 	// Return False if none
@@ -448,11 +458,29 @@ public:
 		{
 			String msg = "Received getWDBypassTimesTopic : " + getWDBypassTimesTopic();
 			mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+
+			if (strcmp(mqtt_payload, "BPON") == 0)
+			{
+				WDBypassMode = true;
+			}
+			else
+			{
+				WDBypassMode = false;
+			}
 		}
 		else if (strcmp(topic, getWEBypassTimesTopic().c_str()) == 0)
 		{
 			String msg = "Received getWEBypassTimesTopic : " + getWEBypassTimesTopic();
 			mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+
+			if (strcmp(mqtt_payload, "BPON") == 0)
+			{
+				WEBypassMode = true;
+			}
+			else
+			{
+				WEBypassMode = false;
+			}
 		}
 		else
 		{
@@ -1015,6 +1043,10 @@ public:
 		sprintf(logString, "%s%i\r", "WD SB Mode:\t", getWDSwitchBack());
 		printTelnet((String)logString);
 		sprintf(logString, "%s%i\r", "WE SB Mode:\t", getWESwitchBack());
+		printTelnet((String)logString);
+		sprintf(logString, "%s%i\r", "WD Bypass mode:\t", getWDBypassMode());
+		printTelnet((String)logString);
+		sprintf(logString, "%s%i\r", "WE Bypass mode:\t", getWEBypassMode());
 		printTelnet((String)logString);
 		sprintf(logString, "%s%s%i%s%i%s%i%s%i\r", "Cntrl config:\t", "WDT:", getWDCntrlTimesReceived(), " WET:", getWECntrlTimesReceived(), " WDC:", getWDCommandReceived(), " WEC:", getWECommandReceived());
 		printTelnet((String)logString);
