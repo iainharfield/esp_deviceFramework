@@ -76,6 +76,8 @@ class cntrlState
 	String WEcntrlTimesTopic;
 	String WDUICmdTopic;
 	String WEUICmdTopic;
+	String WDBypassTimesTopic;
+	String WEBypassTimesTopic;
 
 	cntrlState *cntrlObjRef;
 
@@ -100,6 +102,8 @@ public:
 		WEHoldState = 9;
 		WEcntrlTimesReceived = false;
 		WEcommandReceived = false;
+		WDBypassTimesTopic = "UNDEF";
+		WEBypassTimesTopic = "UNDEF";
 
 		refreshID = "UNDEF";
 		cntrlName = "UNDEF";
@@ -230,6 +234,19 @@ public:
 		WDcntrlTimesTopic = timesTopic;
 		mqttTopicsubscribe(WDcntrlTimesTopic.c_str(), 2); // Subscribe
 	}
+
+	void setWDBypassTimesTopic(String bypassWDTimesTopic)
+	{
+		WDBypassTimesTopic = bypassWDTimesTopic;
+		mqttTopicsubscribe(bypassWDTimesTopic.c_str(), 2); // Subscribe
+	}
+
+	void setWEBypassTimesTopic(String bypassWETimesTopic)
+	{
+		WEBypassTimesTopic = bypassWETimesTopic;
+		mqttTopicsubscribe(bypassWETimesTopic.c_str(), 2); // Subscribe
+	}
+
 	void setWDUIcommandStateTopic(String UIcmdTopic)
 	{
 		WDUICmdTopic = UIcmdTopic;
@@ -300,6 +317,15 @@ public:
 	{
 		return WECntrlRuntimeStateTopic;
 	}
+	String getWDBypassTimesTopic()
+	{
+		return WDBypassTimesTopic;
+	}
+	String getWEBypassTimesTopic()
+	{
+		return WEBypassTimesTopic;
+	}
+
 	String getWDUIcommandStateTopic()
 	{
 		return WDUICmdTopic;
@@ -338,14 +364,8 @@ public:
 		mqtt_payload[len] = '\0';
 		strncpy(mqtt_payload, payload, len);
 
-		//if (reporting == REPORT_DEBUG)
-		//{
-			String msg = "Received MQTT. Topic: " + (String)topic + " Payload: " + (String)mqtt_payload;
-            mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
-			//mqttLog("Received Topic and payload: ", true, true);
-			//mqttLog(topic, true, true);
-			//mqttLog(mqtt_payload, true, true);
-		//}
+		String msg = "Received MQTT. Topic: " + (String)topic + " Payload: " + (String)mqtt_payload;
+        mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
 
 		/****************************************************
 		 * Week days Times received
@@ -382,11 +402,11 @@ public:
 		 ************************************************************************/
 		else if (strcmp(topic, getWDUIcommandStateTopic().c_str()) == 0)
 		{
-			if (reporting == REPORT_DEBUG)
-			{
-				String msg = "getWDUIcommandStateTopic : " + getWDUIcommandStateTopic();
-				mqttLog(msg.c_str(), REPORT_INFO, true, true);
-			}
+			//if (reporting == REPORT_DEBUG)
+			//{
+				String msg = "Received getWDUIcommandStateTopic : " + getWDUIcommandStateTopic();
+				mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+			//}
 			WDcommandReceived = true;
 
 			if (processCntrlMessage(mqtt_payload, "ON", "OFF", getWDUIcommandStateTopic().c_str()) == true)
@@ -408,11 +428,11 @@ public:
 		 ************************************************************************/
 		else if (strcmp(topic, getWEUIcommandStateTopic().c_str()) == 0)
 		{
-			if (reporting == REPORT_DEBUG)
-			{
-				String msg = "getWEUIcommandStateTopic : " + getWEUIcommandStateTopic();
-				mqttLog(msg.c_str(), REPORT_INFO, true, true);
-			}
+			//if (reporting == REPORT_DEBUG)
+			//{
+				String msg = "Received getWEUIcommandStateTopic : " + getWEUIcommandStateTopic();
+				mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+			//}
 			WEcommandReceived = true;
 			if (processCntrlMessage(mqtt_payload, "ON", "OFF", getWEUIcommandStateTopic().c_str()) == true)
 			{
@@ -424,6 +444,16 @@ public:
 			}
 			return true;
 		}
+		else if (strcmp(topic, getWDBypassTimesTopic().c_str()) == 0)
+		{
+			String msg = "Received getWDBypassTimesTopic : " + getWDBypassTimesTopic();
+			mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+		}
+		else if (strcmp(topic, getWEBypassTimesTopic().c_str()) == 0)
+		{
+			String msg = "Received getWEBypassTimesTopic : " + getWEBypassTimesTopic();
+			mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
+		}
 		else
 		{
 			// mqttLog("Unknown message Received Topic and payload: ", true, true);
@@ -432,6 +462,7 @@ public:
 
 			return false;
 		}
+		return true;
 	}
 
 	//***********************************************************************************
