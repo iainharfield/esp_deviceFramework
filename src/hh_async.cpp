@@ -471,6 +471,7 @@ void onMqttConnect(bool sessionPresent)
   mqttReconnectTimer.detach(); // Stop mqtt reconnection 
   mqttLog("MQTT Connected.", REPORT_INFO, true, true);
   mqttLog(willTopic, REPORT_INFO, true, true);
+  //FIXTHIS: Why Send QOS==1 and Retained==true?
   mqttClient.publish(willTopic, 1, true, "online");
 
   // Subscribe to Managment topics
@@ -626,7 +627,8 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
 
       memset(logString, 0, sizeof logString);
       sprintf(logString, "%s,%s,%s,%s,%s", iotBoard, deviceType.c_str(), deviceName.c_str(), WiFi.localIP().toString().c_str(), Router_SSID.c_str());
-      mqttClient.publish(oh3CommandIdentity.c_str(), 1, true, logString);
+      //FIXTHIS: Why Send QOS==0 and Retained==false? - This fire and forget, I thing this is ok? 
+      mqttClient.publish(oh3CommandIdentity.c_str(), 0, false, logString);
     }
     if (strcmp(iotCmd[0], "IOT-RESET") == 0) //
     {

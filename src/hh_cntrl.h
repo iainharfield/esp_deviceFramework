@@ -969,7 +969,8 @@ public:
 			// FIXTHIS ... WD and WE python returns both
 			String msg = "Requesting configuration from Database";
 			mqttLog(msg.c_str(), REPORT_INFO, true, true);
-			mqttClient.publish(oh3StateIOTRefresh, 0, true, getRefreshID().c_str());
+			//FIXTHIS: Why Send QOS==0 and Retained==false? Was retained == true 
+			mqttClient.publish(oh3StateIOTRefresh, 0, false, getRefreshID().c_str());
 			return false;
 		}
 		else
