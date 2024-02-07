@@ -27,6 +27,7 @@ extern void telnet_extension_2(char);
 extern void telnet_extensionHelp(char);
 extern void setWiFiConfigOnBoot(String);
 extern String MQTTDisconnectMessage;
+extern int mqttDisconnectCounter;           // FIXTHIS Added to debug MQTT reconnect issue
 
 extern String Router_SSID;
 int reporting = REPORT_INFO;
@@ -97,6 +98,9 @@ void handleTelnet()
         		  Telnet.println(logString);
               sprintf(logString, "%s%s\n\r", "MQTT Disconnected Message:\t",  MQTTDisconnectMessage.c_str());
         		  Telnet.println(logString);
+              sprintf(logString, "%s%i\n\r", "onMQTTDisconnect counter:\t",  mqttDisconnectCounter);
+        		  Telnet.println(logString);
+              
 
               // Call out to any Application specific content to append this telnet output
               telnet_extension_1(c);
