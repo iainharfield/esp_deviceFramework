@@ -472,7 +472,7 @@ void onMqttConnect(bool sessionPresent)
   mqttLog("MQTT Connected.", REPORT_INFO, true, true);
   mqttLog(willTopic, REPORT_INFO, true, true);
   //FIXTHIS: Why Send QOS==1 and Retained==true?
-  mqttClient.publish(willTopic, 1, true, "online");
+  mqttClient.publish(willTopic, 0, false, "online"); //QOS == 0, Retain == false
 
   // Subscribe to Managment topics
   packetIdSub = mqttClient.subscribe(oh3CommandIOT, 2);
