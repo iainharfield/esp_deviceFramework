@@ -502,8 +502,8 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
     MQTTDisconnectMessage = "Reconnecting to MQTT Broker. Disconnect Reason:" + String(static_cast<uint8_t>(reason));
     mqttLog(MQTTDisconnectMessage.c_str(), REPORT_ERROR, false, true);
     // END
-    //mqttReconnectTimer.once(2, connectToMqtt);   //FIXTYHIS : Set up a repeating ticker and cancel when connected.  If "once" fails, MQTT connection is never established
-    mqttReconnectTimer.attach(2, connectToMqtt);   // detached in two cases. 1) wiFi Disconnected 2) MQTT Connected
+    mqttReconnectTimer.once(5, connectToMqtt);   //FIXTYHIS : Set up a repeating ticker and cancel when connected.  If "once" fails, MQTT connection is never established
+    //mqttReconnectTimer.attach(2, connectToMqtt);   // detached in two cases. 1) wiFi Disconnected 2) MQTT Connected
   }
 }
 
