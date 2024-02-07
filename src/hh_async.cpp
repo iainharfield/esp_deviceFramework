@@ -62,6 +62,7 @@ void ota_setup();
 
 // Implementation in telnet.cpp
 extern void telnetBegin();
+extern void telnetStop();
 extern void printTelnet(String);
 // Implementation in application code
 extern bool onMqttMessageAppExt(char *topic, char *payload, const AsyncMqttClientMessageProperties &properties, const size_t &len, const size_t &index, const size_t &total);
@@ -453,6 +454,8 @@ void onWifiConnected()
 //void onWifiDisconnect(const WiFiEventStationModeDisconnected &event)
 void onWifiDisconnected()
 {
+  telnetStop();   // FIXTHIS: Added to clean up any telenet sessions
+
   mqttLog("Disconnected from Wi-Fi.", REPORT_ERROR ,false, true);
   //Serial.println("Disconnected from Wi-Fi.");
   mqttReconnectTimer.detach(); // (Mmm not sure about this in error cases.) Ensure we don't reconnect to MQTT while reconnecting to Wi-Fi

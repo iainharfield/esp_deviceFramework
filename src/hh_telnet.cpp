@@ -45,6 +45,11 @@ void telnetBegin()
    TelnetServer.begin(); 
 }
 
+void telnetStop()
+{
+   TelnetServer.stop(); 
+}
+
 void handleTelnet()
 {
     char logString[MAX_LOGSTRING_LENGTH];
