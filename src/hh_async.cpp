@@ -117,8 +117,8 @@ int dayNum = -1; // 0=Sun 1=Mon, 2=Tue 3=Wed, 4=Thu 5=Fri, 6=Sat
 // bool weekDay = true;
 int ohTimenow = 0;   //1234 mans 12:34
 
-int mqttDisconnectCounter = 0; //Added this to try and debug MQTT reconnect issues
-
+int mqttDisconnectCounter = 0;  //Added this to try and debug MQTT reconnect issues
+int mqttConnectCounter = 0;     // as above
 
 // wifi server config
 // Set up LittleFS
@@ -470,13 +470,14 @@ void printSeparationLine()
 
 void onMqttConnect(bool sessionPresent)
 {
+
+  mqttConnectCounter++;
+  // mqttDisconnectCounter = 0;
   mqttReconnectTimer.detach(); // Stop mqtt reconnection 
   mqttLog("MQTT Connected.", REPORT_INFO, true, true);
   mqttLog(willTopic, REPORT_INFO, true, true);
   //FIXTHIS: Why Send QOS==1 and Retained==true?
   mqttClient.publish(willTopic, 0, false, "online"); //QOS == 0, Retain == false
-
-  mqttDisconnectCounter = 0;
 
   // Subscribe to Managment topics
   packetIdSub = mqttClient.subscribe(oh3CommandIOT, 2);
