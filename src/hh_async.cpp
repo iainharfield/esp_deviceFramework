@@ -380,7 +380,7 @@ void mqttDisconnect()
 
 bool mqttGetConnectedStatus()
 {
-  mqttLog("Platform: Connected to MQTT", REPORT_INFO, true, true);
+  mqttLog("Connected to MQTT", REPORT_INFO, true, true);
 
   return mqttClient.connected();
 }
@@ -394,7 +394,7 @@ void connectToWifi()
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    Serial.println("Platform: Connecting to Wi-Fi...");
+    Serial.println("Connecting to Wi-Fi...");
     // WiFi.mode(WIFI_STA);
     WiFi.begin(Router_SSID, Router_Pass);
   }
@@ -454,14 +454,15 @@ void onWifiConnected()
 //void onWifiDisconnect(const WiFiEventStationModeDisconnected &event)
 void onWifiDisconnected()
 {
-  telnetStop();   // FIXTHIS: Added to clean up any telenet sessions
-
-  mqttLog("Disconnected from Wi-Fi.", REPORT_ERROR ,false, true);
   //Serial.println("Disconnected from Wi-Fi.");
   mqttReconnectTimer.detach(); // (Mmm not sure about this in error cases.) Ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
   wifiReconnectTimer.once(2, connectToWifi);
 
   todUpdateTimer.detach(); // id no wifi dont use NTP - seems to cause huge delays
+
+  telnetStop();   // FIXTHIS: Added to clean up any telenet sessions
+
+  mqttLog("Disconnected from Wi-Fi.", REPORT_ERROR ,false, true);
 }
 
 
