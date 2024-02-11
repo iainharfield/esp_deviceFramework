@@ -405,7 +405,7 @@ void connectToWifi()
 void connectToMqtt()
 {
   //Serial.println("Platform: Connecting to MQTT...");
-  mqttLog("Platform: Connecting to MQTT...", REPORT_INFO, true, true);
+  mqttLog("Connecting to MQTT...", REPORT_WARN, true, true);
 
   memset(willTopic, 0, sizeof willTopic);
   String dt = espDevice.getType();
@@ -473,27 +473,25 @@ void printSeparationLine()
 
 void onMqttConnect(bool sessionPresent)
 {
-
   mqttConnectCounter++;
   // mqttDisconnectCounter = 0;
   mqttReconnectTimer.detach(); // Stop mqtt reconnection 
-  mqttLog("MQTT Connected.", REPORT_INFO, true, true);
-  mqttLog(willTopic, REPORT_INFO, true, true);
-  //FIXTHIS: Why Send QOS==1 and Retained==true?
-  mqttClient.publish(willTopic, 1, false, "online"); //QOS == 1, Retain == false
+  mqttLog("MQTT Connected.", REPORT_WARN, true, true);
 
   // Subscribe to Managment topics
   packetIdSub = mqttClient.subscribe(oh3CommandIOT, 2);
   packetIdSub = mqttClient.subscribe(oh3CommandTOD, 2);
 
   //*********************************************************
-  // FIX THIS mage objet calss and configurable
-  // Launch any application subscriptions
-  // this function must be imlemented by the application
+  // Configure any application subscriptions.
+  // This function must be imlemented by the application
   //**********************************************************
-
-  //cntrlMQTTTopicSubscribe();
   appMQTTTopicSubscribe();
+
+  // set last known state
+  mqttLog(willTopic, REPORT_INFO, true, true);
+  //FIXTHIS: Why Send QOS==1 and Retained==true?
+  mqttClient.publish(willTopic, 1, true, "online"); //QOS == 1, Retain == true
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
