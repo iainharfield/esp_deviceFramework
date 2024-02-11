@@ -102,9 +102,9 @@ void handleTelnet()
         	  	}
               sprintf(logString, "%s%s\n\r", "LOG Reporting:\t",  reportingState().c_str());
         		  Telnet.println(logString);
-              sprintf(logString, "%s%s\n\r", "MQTT Disconnected Message:\t",  MQTTDisconnectMessage.c_str());
+              sprintf(logString, "%s%s\n", "MQTT Disconnected Message:\t",  MQTTDisconnectMessage.c_str());
         		  Telnet.println(logString);
-              sprintf(logString, "%s%i\n\r", "onMQTTDisconnect counter:\t",  mqttDisconnectCounter);
+              sprintf(logString, "%s%i\n", "onMQTTDisconnect counter:\t",  mqttDisconnectCounter);
         		  Telnet.println(logString);
               sprintf(logString, "%s%i\n\r", "onMQTTConnect counter:\t",  mqttConnectCounter);
         		  Telnet.println(logString);
