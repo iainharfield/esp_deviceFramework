@@ -421,6 +421,8 @@ void connectToMqtt()
   mqttClient.setClientId(mqttClientID);
   mqttClient.setWill(willTopic, 1, true, "Offline"); // Check Case
   mqttClient.connect(); //FIXTHIS what happens if connection to MQTT Broker fails?
+  // FIXTHIS: Sometimes connect does not work and you dont know. keep reconnecting until onConnect stops the ticker.
+  mqttReconnectTimer.once(5, connectToMqtt);   //FIXTHIS : Set up a repeating ticker and cancel when connected.
 }
 
 
