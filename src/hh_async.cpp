@@ -404,6 +404,7 @@ void connectToWifi()
 
 void connectToMqtt()
 {
+  mqttClient.disconnect(true); 
   //Serial.println("Platform: Connecting to MQTT...");
   mqttLog("Connecting to MQTT...", REPORT_WARN, true, true);
 
