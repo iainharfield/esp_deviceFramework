@@ -5,9 +5,14 @@
 
 #include "hh_defines.h"
 #include <Arduino.h>
-#include <AsyncMqttClient_Generic.hpp>
-//
+// read:  https://registry.platformio.org/libraries/khoih-prog/ESPAsync_WiFiManager
+#include <AsyncMqttClient.h> 
+//#include <AsyncMqttClient_Generic.hpp>
+
+
+//*************************************
 // defined in telnet.cpp
+//*************************************
 extern int reporting;
 extern bool telnetReporting;
 //*************************************

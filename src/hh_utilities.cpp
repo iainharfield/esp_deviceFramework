@@ -1,8 +1,11 @@
 #include "hh_defines.h"
 #include <Arduino.h>
 #include <time.h>
+
+// read:  https://registry.platformio.org/libraries/khoih-prog/ESPAsync_WiFiManager
 //#include <AsyncMqtt_Generic.h>
-#include <AsyncMqttClient_Generic.hpp>
+//////#include <AsyncMqttClient_Generic.hpp>
+#include <AsyncMqttClient.h> 
 
 extern AsyncMqttClient mqttClient;
 extern void printTelnet(String);      // defined in telnet.cpp

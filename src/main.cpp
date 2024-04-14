@@ -7,7 +7,7 @@
 
 #include <ArduinoOTA.h>
 #include <Ticker.h>
-#include <AsyncMqttClient_Generic.hpp>
+/// xxx#include <AsyncMqttClient_Generic.hpp>
 #if defined(ESP32)
     #define ESP_DRD_USE_LITTLEFS  true
     #define ESP_DRD_USE_SPIFFS    false

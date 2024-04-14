@@ -61,7 +61,7 @@ void handleTelnet()
       if(Telnet) Telnet.stop();          // client disconnected
       Telnet = TelnetServer.accept(); // ready for new client
     } else {
-      TelnetServer.accept().stop();  // have client, block new conections
+      TelnetServer.available().stop();  // have client, block new conections
     }
   }
 

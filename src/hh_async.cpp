@@ -1,3 +1,4 @@
+// read:  https://registry.platformio.org/libraries/khoih-prog/ESPAsync_WiFiManager
 /****************************************************************************************************************************
 
  *****************************************************************************************************************************/
@@ -12,12 +13,16 @@
 //#else
 //  #include "LITTLEFS.h"
 //#endif  
+
 #include <time.h>
 #include <ArduinoOTA.h>
 #include <Ticker.h>
-#include <AsyncMqtt_Generic.h> 
+
+//#include <AsyncMqtt_Generic.h> 
 #include <ESPAsync_WiFiManager.h> // needed for SSID and Password config  
 //#include "LittleFS.h"
+#include <AsyncMqttClient.h> 
+
 
 #include <ArduinoJson.h>
 #include "LITTLEFS.h"
