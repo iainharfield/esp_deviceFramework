@@ -19,9 +19,9 @@
   "dependencies": 
   [
     {
-      "owner": "khoih-prog",
-      "name": "AsyncMQTT_Generic",
-      "version": ">=1.8.1",
+      "owner": "heman",
+      "name": "AsyncMqttClient-esphome",
+      "version": ">=2.0.0",
       "platforms": ["espressif32", "espressif8266"]
     },
     {

@@ -21,6 +21,7 @@
 #define DRD_ADDRESS 0
 #include <ESP_DoubleResetDetector.h>
 
+#include <AsyncMqttClient.h> 
 
 #include "hh_defines.h"
 #include "hh_utilities.h"
