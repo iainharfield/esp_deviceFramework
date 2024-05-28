@@ -587,6 +587,7 @@ public:
 				// String msg = "processCntrlMessage-1 : " + (String)commandTopic;
 				// mqttLog(msg.c_str(), true, true);
 				setWDRunMode(OFFMODE);
+				setWDSwitchBack(SBUNKOWN);
 				app_WD_off(cntrlObjRef);
 			}
 			else if (strcmp(commandTopic, getWEUIcommandStateTopic().c_str()) == 0)
@@ -594,6 +595,7 @@ public:
 				// String msg = "processCntrlMessage-2 : " + (String)commandTopic;
 				// mqttLog(msg.c_str(), true, true);
 				setWERunMode(OFFMODE);
+				setWESwitchBack(SBUNKOWN);
 				app_WE_off(cntrlObjRef);
 			}
 		}

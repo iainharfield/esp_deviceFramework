@@ -463,14 +463,19 @@ void onWifiConnected()
 void onWifiDisconnected()
 {
   //Serial.println("Disconnected from Wi-Fi.");
-  mqttReconnectTimer.detach(); // (Mmm not sure about this in error cases.) Ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
-  wifiReconnectTimer.once(2, connectToWifi);
+  // FIXTHIS 230523: Cases are hat sometimes wiFi reconnection never works so trying restart ... comment out next two lines and restart see below
+  //mqttReconnectTimer.detach(); // (Mmm not sure about this in error cases.) Ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
+  //wifiReconnectTimer.once(2, connectToWifi);
 
-  todUpdateTimer.detach(); // id no wifi dont use NTP - seems to cause huge delays
+  todUpdateTimer.detach(); // if no wifi dont use NTP - seems to cause huge delays
 
   telnetStop();   // FIXTHIS: Added to clean up any telenet sessions
 
   mqttLog("Disconnected from Wi-Fi.", REPORT_ERROR ,false, true);
+
+  // FIXTHIS 230523: Adding this to test failed reconnections - could be a router issue?
+  delay(1000);    //is this needed?
+  ESP.restart();
 }
 
 
