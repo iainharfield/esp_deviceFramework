@@ -380,7 +380,7 @@ void mqttTopicsubscribe(const char *topic, int qos)
 
 void mqttDisconnect()
 {
-  mqttClient.disconnect(true);
+  mqttClient.disconnect(false);   // FIXTHIS changed to false 20/11/2024
 }
 
 bool mqttGetConnectedStatus()
@@ -505,7 +505,7 @@ void onMqttConnect(bool sessionPresent)
   // set last known state
   mqttLog(willTopic, REPORT_INFO, true, true);
   //FIXTHIS: Why Send QOS==1 and Retained==true?
-  mqttClient.publish(willTopic, 1, true, "online"); //QOS == 1, Retain == true
+  mqttClient.publish(willTopic, 0, true, "online"); //QOS == 1, Retain == true changed to QOS == 0 20/11/2024
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
