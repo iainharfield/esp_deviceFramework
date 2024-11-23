@@ -409,7 +409,7 @@ void connectToWifi()
 
 void connectToMqtt()
 {
-  mqttClient.disconnect(true); 
+  mqttClient.disconnect(false); // FIXTHIS changed to false 20/11/2024.  Think about removing this line.
   //Serial.println("Platform: Connecting to MQTT...");
   mqttLog("Connecting to MQTT...", REPORT_WARN, true, true);
 
