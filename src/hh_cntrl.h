@@ -609,17 +609,16 @@ public:
 		}
 		else if (strcmp(mqttMessage, "NEXT") == 0)
 		{
-			if (strcmp(commandTopic, getWDUIcommandStateTopic().c_str()) == 0)
+			if (strcmp(commandTopic, getWDUIcommandStateTopic().c_str()) == 0)	//Weekday
 			{
-                String logRecord = "NEXT received. WDZone = " + (String)getWDZone() + ", WDRunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
+                String logRecord = "WD NEXT received. WDZone: " + (String)getWDZone() + ", WDRunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState() + " Hold State: " + getWDHoldState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				setWDRunMode(NEXTMODE);
 				setWDSwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next OFF (don't switch back when this zone ends)
 
 				//String logRecord = "NEXT received. Zone = " + (String)getWDZone() + " RunMode: " + (String)getWDRunMode() + " Output State: " + (String)getOutputState();
-				logRecord = "NEXT received. WDZone = " + (String)getWDZone() + ", WDRunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState();
-				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+				
 
 				if (getOutputState() == 0) 		// 0 = Off
 				//if (onORoff() == true) // if true then we are in a heating zone. Next means stay switched on until next zone.
@@ -632,18 +631,20 @@ public:
 					setWDHoldState(0);		 // the state to hold while in NEXTMDDE (Heat OFF)
 					app_WD_off(cntrlObjRef); // Set off because we want OFF until the end of the next ON
 				}
+				logRecord = "WD NEXT changed. WDZone:" + (String)getWDZone() + ", WDRunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState() + " Hold State: " + getWDHoldState();
+				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 			}
-			else if (strcmp(commandTopic, getWEUIcommandStateTopic().c_str()) == 0)
+			else if (strcmp(commandTopic, getWEUIcommandStateTopic().c_str()) == 0) //Weekend
 			{
-				String logRecord = "NEXT received. WEZone = " + (String)getWEZone() + ", WERunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
+				String logRecord = "WE NEXT received. WEZone = " + (String)getWEZone() + ", WERunMode: " + runmodeText(getWERunMode()) + ", Current Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 				setWERunMode(NEXTMODE);
 				setWESwitchBack(SBOFF); // Switch back to AUTOMODE when Time of Day is next ON (don't switch back when this zone ends)
 
 				//String logRecord = "NEXT received. Zone = " + (String)getWEZone() + " RunMode: " + (String)getWERunMode() + " Output State: " + (String)getOutputState();
-				logRecord = "NEXT received. WEZone = " + (String)getWEZone() + ", WERunMode: " + runmodeText(getWERunMode()) + ", Output State: " + (String)getOutputState();
-				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
+				// FIXTHIS 2911logRecord = "NEXT received. WEZone = " + (String)getWEZone() + ", WERunMode: " + runmodeText(getWERunMode()) + ", Current Output State: " + (String)getOutputState();
+				// Fixthis 2911 mqttLog(logRecord.c_str(), REPORT_INFO, true, true);	
 
 				// mqttClient.publish(getWECntrlRunTimesStateTopic().c_str(), 0, true, "ON"); // FIXTHIS WD or WE
 				//if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
@@ -805,6 +806,8 @@ public:
 		char logString[MAX_LOGSTRING_LENGTH];
 
 		// Check all WD and WE times have been received before doing anything
+		// Send the WD and WE messages to the application irrespective of the day..
+		// Let the app decide what to do.
 		if (runTimeReceivedCheck() == true)
 		{
 			String logRecord = "WDRunMode: " + (String)getWDRunMode() + ", WDSwitchBack: " + (String)getWDSwitchBack() + ", WDZone: " + (String)wdzone + ", WDonOroff: " + (String)onORoffstate + ", WDHold: " + getWDHoldState();
@@ -824,12 +827,14 @@ public:
 
 				if (getWDHoldState() == onORoffstate) // If same then in the next heating zone so go back and run like normal
 				{
+					logRecord = "WD NEXT Mode returning to AUTO Mode";
+					mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+
 					setWDSwitchBack(SBON); // SBON means switch back to normal operation at the end of a gap period
 					setWDRunMode(AUTOMODE);
 					app_WD_auto(cntrlObjRef);
 				}
 			}
-			// else if (getWERunMode() == NEXTMODE && coreServices.getWeekDayState() == false) //false == weekend
 			if (getWERunMode() == NEXTMODE)
 			{
 				onORoffstate = onORoff();
@@ -850,8 +855,6 @@ public:
 			{
 				if (onORoff() == true)
 				{
-					// trigger Application let it know that the Contoller in an on period.
-					// Let the app decide what to do.
 					app_WD_on(cntrlObjRef);
 				}
 				else
@@ -875,28 +878,25 @@ public:
 			//else if (getWDRunMode() == ONMODE)
 			if (getWDRunMode() == ONMODE)
 			{
-
 				app_WD_on(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
-				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently ON");
+				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "WD Permanently ON");
 				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			//else if (getWDRunMode() == OFFMODE)
 			if (getWDRunMode() == OFFMODE)
 			{
-
 				app_WD_off(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
-				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently OFF");
+				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "WD Permanently OFF");
 				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			//else if (getWERunMode() == ONMODE)
 			if (getWERunMode() == ONMODE)
 			{
-
 				app_WE_on(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
-				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently ON");
+				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "WE Permanently ON");
 				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			//else if (getWERunMode() == OFFMODE)
@@ -904,7 +904,7 @@ public:
 			{
 				app_WE_off(cntrlObjRef);
 				memset(logString, 0, sizeof logString);
-				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Permanently OFF");
+				sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "WE Permanently OFF");
 				mqttLog(logString, REPORT_INFO, true, true);
 			}
 			//else

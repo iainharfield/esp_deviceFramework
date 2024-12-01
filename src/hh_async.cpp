@@ -666,13 +666,16 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
   }
   else
   {
-    //****************************
-    // Implement contoller and Application MQTT   FIXTHIS - shit logic
-    //****************************
+    //**************************************************************
+    // Implement contoller and Application MQTT
+    // If message not processed above execute default processing:
+    // 1) Process message on controller FIRST
+    // 2) Process Message by the application specific logic SECOND
+    //**************************************************************
     onMqttMessageAppCntrlExt(topic, payload, properties, len, index, total);
   
     onMqttMessageAppExt(topic, payload, properties, len, index, total);
-   //mqttLog("onMqttMessageAppExt processing complete", true, true);
+  
   }
 }
 
