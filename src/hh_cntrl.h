@@ -855,13 +855,26 @@ public:
 
 				if (getWDHoldState() == onORoffstate) // If same then in the next heating zone so go back and run like normal
 				{
-					logRecord = "WD NEXT Mode returning to AUTO Mode";
-					mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+					if (getWDRunMode() == AUTOMODE)
+					{
+						logRecord = "WD NEXT Mode returning to AUTO Mode";
+						mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
-					setWDSwitchBack(SBON); // SBON means switch back to normal operation at the end of a gap period
-					//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
-					setWDRunMode(AUTOMODE);
-					app_WD_auto(cntrlObjRef);
+						setWDSwitchBack(SBON); // SBON means switch back to normal operation at the end of a gap period
+						//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
+						setWDRunMode(AUTOMODE);
+						app_WD_auto(cntrlObjRef);
+					}
+					if (getWDRunMode() == OFFMODE)
+					{
+						logRecord = "WD NEXT Mode returning to OFF Mode";
+						mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
+
+						setWDSwitchBack(SBON); // SBON means switch back to normal operation at the end of a gap period
+						//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
+						setWDRunMode(OFFMODE);
+						app_WD_off(cntrlObjRef);
+					}
 				}
 			}
 			if (getWERunMode() == NEXTMODE)
