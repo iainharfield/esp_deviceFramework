@@ -855,6 +855,7 @@ public:
 
 				if (getWDHoldState() == onORoffstate) // If same then in the next heating zone so go back and run like normal
 				{
+					//FIXTHIS 01/05/2025
 					if (getWDRunMode() == AUTOMODE)
 					{
 						logRecord = "WD NEXT Mode returning to AUTO Mode";
@@ -865,7 +866,7 @@ public:
 						setWDRunMode(AUTOMODE);
 						app_WD_auto(cntrlObjRef);
 					}
-					if (getWDRunMode() == OFFMODE)
+					else if (getWDRunMode() == OFFMODE)
 					{
 						logRecord = "WD NEXT Mode returning to OFF Mode";
 						mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
@@ -874,6 +875,11 @@ public:
 						//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
 						setWDRunMode(OFFMODE);
 						app_WD_off(cntrlObjRef);
+					}
+					else
+					{
+						logRecord = "ERROR: WD NEXT Mode returning unknown";
+						mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 					}
 				}
 			}
