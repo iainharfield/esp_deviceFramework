@@ -55,20 +55,22 @@ class cntrlState
 {
 	int outputState = 0; // Off
 	int WDrunMode;
+	int WDreturnToModeAfterNEXT;
 	int WDswitchBack;
 	int WDzone;
 	int WDHoldState;
 	bool WDcntrlTimesReceived = false;
 	bool WDcommandReceived = false;
-	bool WDBypassMode = true;
+	//bool WDBypassMode = true;
 
 	int WErunMode;
+	int WEreturnToModeAfterNEXT;
 	int WEswitchBack;
 	int WEzone;
 	int WEHoldState;
 	bool WEcntrlTimesReceived = false;
 	bool WEcommandReceived = false;
-	bool WEBypassMode = true;
+	//bool WEBypassMode = true;
 
 	int WDlcntrlTimes[6];
 	char WDcntrlTimes[6][10]{"0000", "0100", "0200", "0300", "0400", "0600"}; //  how big is each array element? 6 elements each element 10 characters long (9 + 1 for /0)
@@ -97,6 +99,7 @@ public:
 	cntrlState()
 	{
 		WDrunMode = UNKNOWNMODE; //AUTOMODE;
+		WDreturnToModeAfterNEXT = UNKNOWNMODE;
 		WDswitchBack = SBUNKOWN;
 		WDzone = ZONEGAP;
 		WDHoldState = 9;
@@ -104,6 +107,7 @@ public:
 		WDcommandReceived = false;
 
 		WErunMode = UNKNOWNMODE;
+		WEreturnToModeAfterNEXT = UNKNOWNMODE;
 		WEswitchBack = SBUNKOWN;
 		WEzone = ZONEGAP;
 		WEHoldState = 9;
@@ -189,6 +193,10 @@ public:
 	{
 		WDrunMode = rm;
 	}
+	void setWDreturnToModeAfterNEXT(int rman)
+	{
+		WDreturnToModeAfterNEXT = rman;
+	}
 	void setWDSwitchBack(int sb)
 	{
 		WDswitchBack = sb;
@@ -221,6 +229,10 @@ public:
 	void setWERunMode(int rm)
 	{
 		WErunMode = rm;
+	}
+	void setWEreturnToModeAfterNEXT(int rman)
+	{
+		WEreturnToModeAfterNEXT = rman;
 	}
 	void setWESwitchBack(int sb)
 	{
@@ -357,14 +369,22 @@ public:
 	{
 		return WEHoldState;
 	}
-	bool getWEBypassMode()
+	int getWDreturnToModeAfterNEXT()
 	{
-		return WEBypassMode;
+		return WDreturnToModeAfterNEXT;
 	}
-	bool getWDBypassMode()
+	int getWEreturnToModeAfterNEXT()
 	{
-		return WDBypassMode;
+		return WEreturnToModeAfterNEXT;
 	}
+//	bool getWEBypassMode()
+//	{
+//		return WEBypassMode;
+//	}
+//	bool getWDBypassMode()
+//	{
+//		return WDBypassMode;
+//	}
 	//****************************************************************
 	// Process any application specific inbound MQTT messages
 	// Return False if none
@@ -459,7 +479,7 @@ public:
 			}
 			return true;
 		}
-		else if (strcmp(topic, getWDBypassTimesTopic().c_str()) == 0)
+/*		else if (strcmp(topic, getWDBypassTimesTopic().c_str()) == 0)
 		{
 			String msg = "Received getWDBypassTimesTopic : " + getWDBypassTimesTopic();
 			mqttLog(msg.c_str(), REPORT_DEBUG, true, true);
@@ -487,6 +507,7 @@ public:
 				WEBypassMode = false;
 			}
 		}
+*/
 		else
 		{
 			// mqttLog("Unknown message Received Topic and payload: ", true, true);
@@ -609,8 +630,13 @@ public:
 		}
 		else if (strcmp(mqttMessage, "NEXT") == 0)
 		{
+			// FIXTHIS If the heating runstate is OFF (not SET) we want the heating to come ON and go back to OFF state. Dont go back to SET state
+			// FIXTHIS If the heating runstate is ON (not SET) we want the heating to come OFF and go back to ON state. Dont go back to SET state
+
 			if (strcmp(commandTopic, getWDUIcommandStateTopic().c_str()) == 0)	//Weekday
 			{
+				setWDreturnToModeAfterNEXT(getWDRunMode());
+
                 String logRecord = "WD NEXT received. WDZone: " + (String)getWDZone() + ", WDRunMode: " + runmodeText(getWDRunMode()) + ", Output State: " + (String)getOutputState() + " Hold State: " + getWDHoldState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
@@ -636,6 +662,8 @@ public:
 			}
 			else if (strcmp(commandTopic, getWEUIcommandStateTopic().c_str()) == 0) //Weekend
 			{
+				setWEreturnToModeAfterNEXT(getWERunMode());
+
 				String logRecord = "WE NEXT received. WEZone = " + (String)getWEZone() + ", WERunMode: " + runmodeText(getWERunMode()) + ", Current Output State: " + (String)getOutputState();
 				mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
@@ -650,12 +678,12 @@ public:
 				//if (onORoff() == true) 		// if true then we are in a heating zone. Next means stay switched on until next zone.
 				if (getOutputState() == 0)		// 0 = Off
 				{
-					setWEHoldState(1);
-					app_WE_on(cntrlObjRef); // Set off because we want OFF until the end of the next OFF
+					setWEHoldState(1);			// the state to hold while in NEXTMDDE (Heat ON)
+					app_WE_on(cntrlObjRef); 	// Set on because we want ON until the end of the next OFF
 				}
 				else
 				{			
-					setWEHoldState(0);
+					setWEHoldState(0);			// the state to hold while in NEXTMDDE (Heat OFF)
 					app_WE_off(cntrlObjRef);
 				}
 			}
@@ -831,6 +859,7 @@ public:
 					mqttLog(logRecord.c_str(), REPORT_INFO, true, true);
 
 					setWDSwitchBack(SBON); // SBON means switch back to normal operation at the end of a gap period
+					//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
 					setWDRunMode(AUTOMODE);
 					app_WD_auto(cntrlObjRef);
 				}
@@ -846,6 +875,7 @@ public:
 				if (getWEHoldState() == onORoffstate)
 				{
 					setWESwitchBack(SBON); // SBON means switch back to normal operation at the end of a gap period
+					//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
 					setWERunMode(AUTOMODE);
 					app_WE_auto(cntrlObjRef);
 				}
@@ -855,10 +885,14 @@ public:
 			{
 				if (onORoff() == true)
 				{
+					//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
+					// FIXTHIS if getWDreturnToModeAfterNEXT() == OFFMODE then app_WE_off(cntrlObjRef);
 					app_WD_on(cntrlObjRef);
 				}
 				else
 				{
+					//FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
+					// FIXTHIS if getWDreturnToModeAfterNEXT() == OFFMODE then app_WE_off(cntrlObjRef);
 					app_WD_off(cntrlObjRef);
 				}
 			}
@@ -867,10 +901,16 @@ public:
 			{
 				if (onORoff() == true)
 				{
+					// FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
+					// FIXTHIS If state NEXT was requested when runstate was OFF then reurn back to OFF state after NEXT processing
+					// FIXTHIS if getWEreturnToModeAfterNEXT() == OFFMODE then app_WE_off(cntrlObjRef);
 					app_WE_on(cntrlObjRef);
 				}
 				else
 				{
+					// FIXTHIS dont assume to switch bak AUTOMODE. When NEXT was initated original state could be OFF or ON
+					// FIXTHIS If state NEXT was requested when runstate was ON then reurn back to ON state after NEXT processing
+					// FIXTHIS if getWEreturnToModeAfterNEXT() == ONMODE then app_WE_off(cntrlObjRef);
 					app_WE_off(cntrlObjRef);
 				}
 			}
@@ -1052,9 +1092,13 @@ public:
 		printTelnet((String)logString);
 		sprintf(logString, "%s%i\r", "WE SB Mode:\t", getWESwitchBack());
 		printTelnet((String)logString);
-		sprintf(logString, "%s%i\r", "WD Bypass mode:\t", getWDBypassMode());
+//		sprintf(logString, "%s%i\r", "WD Bypass mode:\t", getWDBypassMode());
+//		printTelnet((String)logString);
+//		sprintf(logString, "%s%i\r", "WE Bypass mode:\t", getWEBypassMode());
+//		printTelnet((String)logString);
+		sprintf(logString, "%s%i\r", "WD Mode after NEXT:\t", getWDreturnToModeAfterNEXT());
 		printTelnet((String)logString);
-		sprintf(logString, "%s%i\r", "WE Bypass mode:\t", getWEBypassMode());
+		sprintf(logString, "%s%i\r", "WE Mode after NEXT:\t", getWEreturnToModeAfterNEXT());
 		printTelnet((String)logString);
 		sprintf(logString, "%s%s%i%s%i%s%i%s%i\r", "Cntrl config:\t", "WDT:", getWDCntrlTimesReceived(), " WET:", getWECntrlTimesReceived(), " WDC:", getWDCommandReceived(), " WEC:", getWECommandReceived());
 		printTelnet((String)logString);
