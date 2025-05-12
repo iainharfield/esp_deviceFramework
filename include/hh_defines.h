@@ -29,10 +29,12 @@
 #define p_mqttBrokerPort_Label "mqttBrokerPort"
 
 // MQTT Topic Names
-#define oh3CommandIOT "/house/service/iot-command"             // e.g. IOT-IDENTITY, IOT-RESET, IOT-RESTART, IOT-SWITCH-CONFIG
-#define oh3StateLog "/house/service/log"                       // Log messages
-#define oh3CommandTOD "/house/service/time-of-day"             // Time of day broadcast from OpenHab
-#define oh3StateIOTRefresh "/house/service/iot-device-refresh" // Request Refresh of Contol times ( not needed by all apps)
+#define oh3CommandIOT "/house/service/iot-command"              // e.g. IOT-IDENTITY, IOT-RESET, IOT-RESTART, IOT-SWITCH-CONFIG
+#define oh3StateLog "/house/service/log"                        // Log messages
+#define oh3CommandTOD "/house/service/time-of-day"              // Time of day broadcast from OpenHab
+#define oh3StateIOTRefresh "/house/service/iot-device-refresh"  // Request Refresh of Contol times ( not needed by all apps)
+#define StateCntrlModeWD "/house/cntrl/%s/wd-control-operating-mode"	    // %s will be the controller name to make the topic unique. Mode values will be AUTOMODE, OFFMODE, ONMODE ...
+#define StateCntrlModeWE "/house/cntrl/%s/we-control-operating-mode"	    // As Above
 
 // FIXTHIS Got to be a smarter way
 #define REPORT_INFO   1

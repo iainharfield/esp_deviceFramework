@@ -192,6 +192,10 @@ public:
 	void setWDRunMode(int rm)
 	{
 		WDrunMode = rm;
+		// Publish to set OpenHab item
+		char topic[100];
+		snprintf(topic, sizeof(topic), StateCntrlModeWD, cntrlName.c_str());
+		mqttClient.publish(topic, 0, false, runmodeText(rm).c_str()); 
 	}
 	void setWDreturnToModeAfterNEXT(int rman)
 	{
@@ -229,6 +233,10 @@ public:
 	void setWERunMode(int rm)
 	{
 		WErunMode = rm;
+
+		char topic[100];
+		snprintf(topic, sizeof(topic), StateCntrlModeWE, cntrlName.c_str());
+		mqttClient.publish(topic, 0, false, runmodeText(rm).c_str()); 
 	}
 	void setWEreturnToModeAfterNEXT(int rman)
 	{
@@ -980,6 +988,10 @@ public:
 			//	sprintf(logString, "%s,%s,%s", getCntrlName().c_str(), espDevice.getName().c_str(), "Unknown running mode ");
 			//	mqttLog(logString, REPORT_WARN, true, true);
 			//}
+			// 11/05/2025Just call set to publish MQTT to UI every TOD tick FIXTHIS a bit untidy
+			setWDRunMode(getWDRunMode());
+			setWERunMode(getWERunMode());
+
 		}
 	}
 	/*
