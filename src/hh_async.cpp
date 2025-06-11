@@ -491,6 +491,7 @@ void onMqttConnect(bool sessionPresent)
   // mqttDisconnectCounter = 0;
   mqttReconnectTimer.detach(); // Stop mqtt reconnection 
   mqttLog("MQTT Connected.", REPORT_WARN, true, true);
+  MQTTDisconnectMessage = "MQTT Connected.";
 
   // Subscribe to Managment topics
   packetIdSub = mqttClient.subscribe(oh3CommandIOT, 2);
