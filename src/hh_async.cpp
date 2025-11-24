@@ -649,6 +649,9 @@ void onMqttMessage(char *topic, char *payload, const AsyncMqttClientMessagePrope
       mqttLog(logString, REPORT_INFO, true, true);
 
       memset(logString, 0, sizeof logString);
+      sprintf(logString, "%s,%s,%s,%s,%s", iotBoard, deviceType.c_str(), deviceName.c_str(), WiFi.localIP().toString().c_str(), Router_SSID.c_str(), String(WiFi.RSSI()).c_str());
+      //sprintf(logString, "%s,%s,%s,%s,%s", iotBoard, deviceType.c_str(), deviceName.c_str(), WiFi.localIP().toString().c_str(), Router_SSID.c_str(), WiFi.RSSI().toString().c_str());
+
       sprintf(logString, "%s,%s,%s,%s,%s", iotBoard, deviceType.c_str(), deviceName.c_str(), WiFi.localIP().toString().c_str(), Router_SSID.c_str());
       //FIXTHIS: Why Send QOS==0 and Retained==false? - This fire and forget, I thing this is ok? 
       mqttClient.publish(oh3CommandIdentity.c_str(), 0, false, logString);
